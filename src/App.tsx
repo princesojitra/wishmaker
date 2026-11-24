@@ -16,8 +16,6 @@ export function App() {
   const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [wishes, setWishes] = useState<Wish[] | null>(null);
-  const [source, setSource] = useState<'gemini' | 'curated'>('gemini');
-  const [notice, setNotice] = useState<string | undefined>(undefined);
   const [currentRecipient, setCurrentRecipient] = useState('');
   const [lastRequest, setLastRequest] = useState<WishRequest | null>(null);
   const [toastMessage, setToastMessage] = useState('');
@@ -60,7 +58,6 @@ export function App() {
     setWishes(null);
     setCurrentRecipient(data.recipientName);
     setLastRequest(data);
-    setNotice(undefined);
 
     try {
       const response = await fetch('/api/generate', {
@@ -77,21 +74,15 @@ export function App() {
 
       if (resData.wishes && resData.wishes.length > 0) {
         setWishes(resData.wishes);
-        setSource(resData.source || 'gemini');
-        setNotice(resData.notice);
       } else {
         // Fallback
         const fallback = getCuratedWishes(data);
         setWishes(fallback);
-        setSource('curated');
-        setNotice('Using curated fallback library.');
       }
     } catch (err: any) {
       console.warn('API fetch issue, using local curated engine:', err);
       const fallback = getCuratedWishes(data);
       setWishes(fallback);
-      setSource('curated');
-      setNotice('Offline/Dev Mode: Generated from curated wish repository.');
     } finally {
       setIsLoading(false);
       fireCelebrationConfetti();
@@ -167,8 +158,6 @@ export function App() {
               <WishResults
                 wishes={wishes}
                 recipientName={currentRecipient}
-                source={source}
-                notice={notice}
                 language={language}
                 onCopy={handleCopyWish}
                 onShareWhatsApp={handleShareWhatsApp}

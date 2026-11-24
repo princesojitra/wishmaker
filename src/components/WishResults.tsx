@@ -1,13 +1,11 @@
 import React from 'react';
-import { Sparkles, Bot, Info, RefreshCw } from 'lucide-react';
+import { Sparkles, RefreshCw } from 'lucide-react';
 import { WishCard } from './WishCard';
 import { Wish, Language } from '../types/wish';
 
 interface WishResultsProps {
   wishes: Wish[];
   recipientName: string;
-  source: 'gemini' | 'curated';
-  notice?: string;
   language: Language;
   onCopy: (text: string) => void;
   onShareWhatsApp: (text: string) => void;
@@ -17,8 +15,6 @@ interface WishResultsProps {
 export const WishResults: React.FC<WishResultsProps> = ({
   wishes,
   recipientName,
-  source,
-  notice,
   language,
   onCopy,
   onShareWhatsApp,
@@ -46,17 +42,10 @@ export const WishResults: React.FC<WishResultsProps> = ({
 
         {/* Source Badge & Regenerate */}
         <div className="flex items-center gap-2">
-          {source === 'gemini' ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-festive-100 px-3 py-1 text-xs font-medium text-festive-800 dark:bg-festive-950 dark:text-festive-300">
-              <Bot className="w-3.5 h-3.5 text-festive-600" />
-              <span>Crafted by Gemini AI</span>
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>Curated Masterpiece Engine</span>
-            </span>
-          )}
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-festive-100 px-3 py-1 text-xs font-medium text-festive-800 dark:bg-festive-950 dark:text-festive-300">
+            <Sparkles className="w-3.5 h-3.5 text-festive-600" />
+            <span>AI Personalized</span>
+          </span>
 
           <button
             type="button"
@@ -69,25 +58,6 @@ export const WishResults: React.FC<WishResultsProps> = ({
           </button>
         </div>
       </div>
-
-      {/* Notice bar if in curated fallback mode */}
-      {notice && (
-        <div className="flex items-start gap-2.5 rounded-2xl border border-amber-200/80 bg-amber-50/80 p-3.5 text-xs text-amber-800 dark:bg-amber-950/40 dark:border-amber-900 dark:text-amber-300">
-          <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
-          <div>
-            <p className="font-medium">{notice}</p>
-            {notice.includes('Add GEMINI_API_KEY') ? (
-              <p className="text-[11px] text-amber-700/90 dark:text-amber-400/90 mt-0.5">
-                Add your <code className="rounded bg-amber-100 px-1 py-0.2 font-mono text-[10px] dark:bg-amber-900">GEMINI_API_KEY</code> to <code className="rounded bg-amber-100 px-1 py-0.2 font-mono text-[10px] dark:bg-amber-900">.env</code> to activate live Gemini AI generation.
-              </p>
-            ) : (
-              <p className="text-[11px] text-emerald-700/90 dark:text-emerald-400/90 mt-0.5 font-medium">
-                ✓ Your API key is loaded and verified in <code className="rounded bg-emerald-100 px-1 py-0.2 font-mono text-[10px] dark:bg-emerald-900">.env</code>.
-              </p>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* 3 Cards Grid */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
