@@ -1,4 +1,5 @@
 import React from 'react';
+import { Check } from 'lucide-react';
 import { OCCASIONS } from '../data/occasions';
 import { Language } from '../types/wish';
 
@@ -40,21 +41,27 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
               key={occ.id}
               type="button"
               onClick={() => onSelectOccasion(occ.id)}
-              className={`flex items-center gap-2.5 rounded-lg p-2.5 text-left border transition-all duration-150 outline-none ${
+              className={`relative flex items-center gap-2.5 rounded-lg p-2.5 text-left border transition-all duration-150 outline-none ${
                 isSelected
-                  ? 'border-zinc-900 bg-zinc-50 text-zinc-950 ring-1 ring-zinc-900 shadow-xs dark:border-zinc-100 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-100'
+                  ? 'border-indigo-600 bg-indigo-50/50 text-indigo-950 shadow-xs ring-1 ring-indigo-500/25 dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-100'
                   : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-300 dark:hover:border-zinc-700'
               }`}
             >
               <span className="text-lg shrink-0">{occ.icon}</span>
-              <div className="min-w-0">
-                <p className="text-xs font-medium truncate">
+              <div className="min-w-0 pr-4">
+                <p className={`text-xs font-medium truncate ${isSelected ? 'text-indigo-950 font-semibold dark:text-indigo-100' : ''}`}>
                   {getLocalizedTitle(occ)}
                 </p>
                 <p className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">
                   {occ.tag}
                 </p>
               </div>
+
+              {isSelected && (
+                <div className="absolute top-2 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-indigo-600 text-white dark:bg-indigo-500">
+                  <Check className="h-2.5 w-2.5 stroke-[3]" />
+                </div>
+              )}
             </button>
           );
         })}

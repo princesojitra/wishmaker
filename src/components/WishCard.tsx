@@ -71,7 +71,7 @@ export const WishCard: React.FC<WishCardProps> = ({
             <textarea
               value={editedContent}
               onChange={(e) => setEditedContent(e.target.value)}
-              className={`w-full rounded-lg border border-zinc-300 bg-zinc-50 p-2.5 text-xs text-zinc-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-900 min-h-[120px] ${langClass} dark:bg-zinc-800 dark:text-zinc-100 dark:border-zinc-700`}
+              className={`w-full rounded-lg border border-zinc-200 bg-zinc-50 p-2.5 text-xs text-zinc-900 focus-visible:outline-none focus-visible:border-indigo-600 focus-visible:ring-1 focus-visible:ring-indigo-600/30 min-h-[120px] ${langClass} dark:bg-zinc-800 dark:text-zinc-100 dark:border-zinc-700`}
             />
             <div className="flex justify-end">
               <button
@@ -107,7 +107,7 @@ export const WishCard: React.FC<WishCardProps> = ({
             onClick={handleCopy}
             className={`text-xs gap-1.5 h-8 px-2.5 transition-all ${
               copied
-                ? 'border-zinc-900 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900'
+                ? 'border-emerald-600 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-medium'
                 : ''
             }`}
           >

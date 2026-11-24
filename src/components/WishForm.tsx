@@ -113,7 +113,7 @@ export const WishForm: React.FC<WishFormProps> = ({
             <select
               value={relationship}
               onChange={(e) => setRelationship(e.target.value)}
-              className="flex h-10 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus-visible:outline-none focus-visible:border-zinc-900 focus-visible:ring-1 focus-visible:ring-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 shadow-xs"
+              className="flex h-10 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus-visible:outline-none focus-visible:border-indigo-600 focus-visible:ring-1 focus-visible:ring-indigo-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 shadow-xs"
             >
               {RELATIONSHIPS.map((rel) => (
                 <option key={rel.id} value={rel.id}>
@@ -134,20 +134,23 @@ export const WishForm: React.FC<WishFormProps> = ({
               : 'Language'}
           </label>
           <div className="grid grid-cols-3 gap-2">
-            {LANGUAGES.map((lang) => (
-              <button
-                key={lang.id}
-                type="button"
-                onClick={() => onLanguageChange(lang.id)}
-                className={`flex items-center justify-center gap-1.5 rounded-lg py-2 px-3 text-xs font-medium border transition-all ${
-                  language === lang.id
-                    ? 'border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 shadow-xs'
-                    : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800'
-                }`}
-              >
-                <span>{lang.native}</span>
-              </button>
-            ))}
+            {LANGUAGES.map((lang) => {
+              const isSelected = language === lang.id;
+              return (
+                <button
+                  key={lang.id}
+                  type="button"
+                  onClick={() => onLanguageChange(lang.id)}
+                  className={`flex items-center justify-center gap-1.5 rounded-lg py-2 px-3 text-xs font-medium border transition-all ${
+                    isSelected
+                      ? 'border-indigo-600 bg-indigo-50/60 text-indigo-950 font-semibold shadow-xs ring-1 ring-indigo-500/20 dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-100'
+                      : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800'
+                  }`}
+                >
+                  <span>{lang.native}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -170,7 +173,7 @@ export const WishForm: React.FC<WishFormProps> = ({
                   onClick={() => setTone(t.id)}
                   className={`flex items-center justify-center gap-1.5 rounded-lg py-2 px-2 text-center border text-xs font-medium transition-all ${
                     isSelected
-                      ? 'border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 shadow-xs'
+                      ? 'border-indigo-600 bg-indigo-50/60 text-indigo-950 font-semibold shadow-xs ring-1 ring-indigo-500/20 dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-100'
                       : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800'
                   }`}
                 >
@@ -223,11 +226,11 @@ export const WishForm: React.FC<WishFormProps> = ({
           type="submit"
           size="lg"
           disabled={isLoading}
-          className="w-full text-sm font-medium py-3 rounded-xl shadow-xs"
+          className="w-full text-sm font-medium py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs dark:bg-indigo-500 dark:hover:bg-indigo-600"
         >
           {isLoading ? (
             <div className="flex items-center gap-2">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white dark:border-zinc-900 border-t-transparent" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               <span>Generating wishes...</span>
             </div>
           ) : (
