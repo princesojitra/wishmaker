@@ -236,7 +236,7 @@ export const WishForm: React.FC<WishFormProps> = ({
             <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
               {t.toneLabel}
             </label>
-            <span className="text-[11px] text-zinc-500 font-medium">
+            <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-0.5 text-xs font-semibold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 shadow-2xs">
               {language === 'hi'
                 ? 'एक या अधिक टोन चुनें'
                 : language === 'gu'
