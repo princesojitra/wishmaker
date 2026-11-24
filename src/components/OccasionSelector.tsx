@@ -84,8 +84,9 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
                   </div>
                 ) : (
                   occ.popular && (
-                    <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-                      Popular
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 bg-zinc-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-zinc-800 shadow-2xs dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                      <span>Popular</span>
                     </span>
                   )
                 )}

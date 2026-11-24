@@ -1,6 +1,16 @@
 export type Language = 'en' | 'hi' | 'gu';
 
-export type Tone = 'heartfelt' | 'witty' | 'poetic' | 'formal' | 'short';
+export type Tone =
+  | 'heartfelt'
+  | 'witty'
+  | 'poetic'
+  | 'formal'
+  | 'short'
+  | 'inspirational'
+  | 'romantic'
+  | 'roast'
+  | 'nostalgic'
+  | 'blessed';
 
 export interface Occasion {
   id: string;
@@ -17,7 +27,8 @@ export interface WishRequest {
   occasion: string;
   recipientName: string;
   relationship?: string;
-  tone: Tone;
+  tone?: Tone;
+  tones?: string[];
   language: Language;
   context?: string;
 }

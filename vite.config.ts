@@ -35,9 +35,12 @@ export default defineConfig(({ mode }) => {
                     recipientName = 'Dear Friend',
                     relationship = 'friend',
                     tone = 'heartfelt',
+                    tones,
                     language = 'en',
                     context: userContext = '',
                   } = body;
+
+                  const toneList = Array.isArray(tones) && tones.length > 0 ? tones.join(', ') : tone;
 
                   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
                     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -56,7 +59,7 @@ export default defineConfig(({ mode }) => {
                       ? 'Gujarati (strictly in Gujarati script, culturally rich blessings)'
                       : 'English';
 
-                  const prompt = `Write 3 short, beautiful wishes for ${recipientName} (Occasion: ${occasion}, Relationship: ${relationship}, Tone: ${tone}, Language: ${langInstruction}${userContext ? `, Context: ${userContext}` : ''}).
+                  const prompt = `Write 3 short, beautiful wishes for ${recipientName} (Occasion: ${occasion}, Relationship: ${relationship}, Tone(s): ${toneList}, Language: ${langInstruction}${userContext ? `, Context: ${userContext}` : ''}).
 Provide 3 distinct styles:
 1. Heartfelt & Warm
 2. Witty & Fun

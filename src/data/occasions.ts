@@ -145,8 +145,26 @@ export const TONES = [
     description: 'Lyrical depth, metaphors & classic rhythm',
   },
   {
+    id: 'inspirational' as const,
+    label: 'Inspirational',
+    emoji: '🌟',
+    description: 'Motivating, empowering & ambitious',
+  },
+  {
+    id: 'romantic' as const,
+    label: 'Romantic',
+    emoji: '🌹',
+    description: 'Sweet, tender & deeply affectionate',
+  },
+  {
+    id: 'roast' as const,
+    label: 'Playful Roast',
+    emoji: '😈',
+    description: 'Hilarious friendly teasing & sarcasm',
+  },
+  {
     id: 'formal' as const,
-    label: 'Formal & Respectful',
+    label: 'Formal',
     emoji: '👔',
     description: 'Polite, professional & dignified warmth',
   },
@@ -155,6 +173,18 @@ export const TONES = [
     label: 'Short & Punchy',
     emoji: '⚡',
     description: 'Crisp one-liners perfect for quick chats',
+  },
+  {
+    id: 'nostalgic' as const,
+    label: 'Nostalgic',
+    emoji: '🕰️',
+    description: 'Cherishing shared memories & old times',
+  },
+  {
+    id: 'blessed' as const,
+    label: 'Spiritual / Blessed',
+    emoji: '🙏',
+    description: 'Peace, prayers & divine blessings',
   },
 ];
 
