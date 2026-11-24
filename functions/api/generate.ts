@@ -11,6 +11,9 @@ interface WishRequestBody {
   tones?: string[];
   language?: 'en' | 'hi' | 'gu';
   context?: string;
+  seed?: number;
+  regenerationCount?: number;
+  previousWishes?: string[];
 }
 
 interface Env {
@@ -41,6 +44,9 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       tones = [],
       language = 'en',
       context: userContext = '',
+      seed,
+      regenerationCount = 0,
+      previousWishes = [],
     } = body;
 
     const toneList = Array.isArray(tones) && tones.length > 0 ? tones.join(', ') : tone;
@@ -55,6 +61,9 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       tones,
       language,
       context: userContext,
+      seed,
+      regenerationCount,
+      previousWishes,
     };
 
     if (!apiKey || apiKey === 'your_gemini_api_key_here') {
@@ -70,6 +79,16 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       );
     }
 
+    const isRegen = (regenerationCount || 0) > 0;
+    const regenInstruction = isRegen
+      ? `
+REGENERATION MANDATE (Cycle #${regenerationCount}, Unique Seed: ${seed || Math.random()}):
+- The user clicked "Regenerate" to see completely DIFFERENT wishes.
+- You MUST provide 3 completely fresh, novel creative angles with different metaphors, vocabulary, and openings!
+- DO NOT repeat or paraphrase ideas from previous wishes: [${previousWishes.slice(0, 3).join(' | ')}].
+`
+      : '';
+
     const systemPrompt = `You are an elite, empathetic, and culturally nuanced greeting writer and poet.
 Write 3 completely unique, beautifully phrased wishes strictly tailored to the user's specific selections:
 
@@ -80,6 +99,7 @@ INPUTS:
 - Tone(s) Selected: "${toneList}"
 - Language: ${language === 'hi' ? 'Hindi (STRICTLY in authentic Devanagari script, natural flow, heartwarming)' : language === 'gu' ? 'Gujarati (STRICTLY in authentic Gujarati script, culturally rich blessings)' : 'English'}
 - Extra Memory / Context: "${userContext || 'None'}"
+${regenInstruction}
 
 CRITICAL INSTRUCTIONS:
 1. Every wish MUST center around the Occasion ("${occasion}") and honor the Relationship ("${relationship}").
@@ -129,6 +149,10 @@ CRITICAL INSTRUCTIONS:
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: systemPrompt }] }],
+            generationConfig: {
+              temperature: isRegen ? 1.05 : 0.95,
+              topP: 0.95,
+            },
           }),
         });
 
@@ -176,6 +200,7 @@ CRITICAL INSTRUCTIONS:
           tone: 'heartfelt',
           tones: ['heartfelt'],
           language: 'en',
+          regenerationCount: 1,
         }),
         error: error.message,
       }),

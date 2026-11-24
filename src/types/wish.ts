@@ -32,6 +32,9 @@ export interface WishRequest {
   tones?: string[];
   language: Language;
   context?: string;
+  seed?: number;
+  regenerationCount?: number;
+  previousWishes?: string[];
 }
 
 export interface Wish {

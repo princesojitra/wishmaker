@@ -19,6 +19,7 @@ export function App() {
   const [wishes, setWishes] = useState<Wish[] | null>(null);
   const [currentRecipient, setCurrentRecipient] = useState('');
   const [lastRequest, setLastRequest] = useState<WishRequest | null>(null);
+  const [regenCounter, setRegenCounter] = useState(0);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<ToastType>('success');
   const [isToastVisible, setIsToastVisible] = useState(false);
@@ -119,9 +120,27 @@ export function App() {
     showToast('Opening WhatsApp');
   };
 
+  const handleFormSubmit = (data: WishRequest) => {
+    setRegenCounter(0);
+    handleGenerateWishes({
+      ...data,
+      regenerationCount: 0,
+      seed: 0,
+      previousWishes: [],
+    });
+  };
+
   const handleRegenerate = () => {
     if (lastRequest) {
-      handleGenerateWishes(lastRequest);
+      const nextCount = regenCounter + 1;
+      setRegenCounter(nextCount);
+      const previousTexts = wishes ? wishes.map((w) => `${w.title}: ${w.content.slice(0, 40)}`) : [];
+      handleGenerateWishes({
+        ...lastRequest,
+        seed: nextCount,
+        regenerationCount: nextCount,
+        previousWishes: previousTexts,
+      });
     }
   };
 
@@ -155,7 +174,7 @@ export function App() {
               customOccasionText={customOccasion}
               language={language}
               onLanguageChange={setLanguage}
-              onSubmit={handleGenerateWishes}
+              onSubmit={handleFormSubmit}
               isLoading={isLoading}
               onShowToast={showToast}
             />
