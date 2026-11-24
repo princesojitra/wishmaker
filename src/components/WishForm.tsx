@@ -97,10 +97,10 @@ export const WishForm: React.FC<WishFormProps> = ({
     if (selectedTones.includes('custom') && !customToneText.trim()) {
       const msg =
         language === 'hi'
-          ? 'कस्टम स्टाइल अनिवार्य है — कृपया अपना पसंदीदा अंदाज़ लिखें'
+          ? 'कस्टम टोन अनिवार्य है — कृपया अपना पसंदीदा टोन लिखें'
           : language === 'gu'
-          ? 'કસ્ટમ સ્ટાઇલ ફરજિયાત છે — કૃપા કરીને તમારી શૈલી કે અંદાજ લખો'
-          : 'Custom tone is mandatory — please describe your preferred style';
+          ? 'કસ્ટમ ટોન ફરજિયાત છે — કૃપા કરીને તમારો ટોન લખો'
+          : 'Custom tone is mandatory — please describe your preferred tone';
       setCustomToneError(msg);
       triggerShake('tone');
       onShowToast?.(msg, 'warning');
@@ -298,18 +298,9 @@ export const WishForm: React.FC<WishFormProps> = ({
 
         {/* Tone Selector - Responsive Wrapping Multi-Select Chips */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
-              {t.toneLabel}
-            </label>
-            <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-0.5 text-xs font-semibold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 shadow-2xs">
-              {language === 'hi'
-                ? 'एक या अधिक टोन चुनें'
-                : language === 'gu'
-                ? 'એક કે વધુ ટોન પસંદ કરો'
-                : 'Select one or more'}
-            </span>
-          </div>
+          <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
+            {t.toneLabel}
+          </label>
 
           <div className="flex flex-wrap gap-2">
             {TONES.map((toneItem) => {
@@ -337,16 +328,16 @@ export const WishForm: React.FC<WishFormProps> = ({
             })}
           </div>
 
-          {/* Dynamic input for custom tone style */}
+          {/* Dynamic input for custom tone */}
           {selectedTones.includes('custom') && (
             <div className={`pt-1.5 animate-fade-in ${shakeField === 'tone' ? 'animate-shake' : ''}`}>
               <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider flex items-center justify-between mb-1.5">
                 <span>
                   {language === 'hi'
-                    ? 'अपना कस्टम अंदाज़ या स्टाइल लिखें'
+                    ? 'अपना कस्टम टोन लिखें'
                     : language === 'gu'
-                    ? 'તમારો કસ્ટમ અંદાજ કે સ્ટાઇલ લખો'
-                    : 'Describe Your Custom Tone / Style'}
+                    ? 'તમારો કસ્ટમ ટોન લખો'
+                    : 'Describe Your Custom Tone'}
                   <span className="text-red-500 ml-1 font-bold">*</span>
                 </span>
                 <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 normal-case">

@@ -188,9 +188,9 @@ export const TONES = [
   },
   {
     id: 'custom' as const,
-    label: 'Custom Style',
+    label: 'Custom Tone',
     emoji: '✍️',
-    description: 'Enter any custom style or persona',
+    description: 'Enter any custom tone or persona',
   },
 ];
 
