@@ -6,6 +6,7 @@ interface WishRequestBody {
   recipientName: string;
   relationship?: string;
   tone?: string;
+  tones?: string[];
   language?: 'en' | 'hi' | 'gu';
   context?: string;
 }
@@ -35,9 +36,12 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       recipientName = 'Dear Friend',
       relationship = 'friend',
       tone = 'heartfelt',
+      tones = [],
       language = 'en',
       context: userContext = '',
     } = body;
+
+    const toneList = Array.isArray(tones) && tones.length > 0 ? tones.join(', ') : tone;
 
     const apiKey = env.GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : undefined);
 
@@ -59,7 +63,7 @@ Create 3 completely unique, beautifully phrased wishes for:
 - Occasion: ${occasion}
 - Recipient Name: ${recipientName}
 - Relationship to sender: ${relationship}
-- Tone requested: ${tone}
+- Tone(s) requested: ${toneList}
 - Language: ${language === 'hi' ? 'Hindi (strictly in Devanagari script, natural flow, heartwarming)' : language === 'gu' ? 'Gujarati (strictly in Gujarati script, culturally rich blessings)' : 'English'}
 - Extra Memory / Context: ${userContext || 'None'}
 

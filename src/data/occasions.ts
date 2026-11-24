@@ -186,6 +186,12 @@ export const TONES = [
     emoji: '🙏',
     description: 'Peace, prayers & divine blessings',
   },
+  {
+    id: 'custom' as const,
+    label: 'Custom Style',
+    emoji: '✍️',
+    description: 'Enter any custom style or persona',
+  },
 ];
 
 export const LANGUAGES = [

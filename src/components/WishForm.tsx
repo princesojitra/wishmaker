@@ -24,6 +24,7 @@ export const WishForm: React.FC<WishFormProps> = ({
   const [recipientName, setRecipientName] = useState('');
   const [relationship, setRelationship] = useState('friend');
   const [selectedTones, setSelectedTones] = useState<string[]>(['heartfelt']);
+  const [customToneText, setCustomToneText] = useState('');
   const [context, setContext] = useState('');
   const [validationError, setValidationError] = useState('');
 
@@ -52,12 +53,16 @@ export const WishForm: React.FC<WishFormProps> = ({
     }
     setValidationError('');
 
+    const processedTones = selectedTones.map((t) =>
+      t === 'custom' && customToneText.trim() ? customToneText.trim() : t
+    );
+
     onSubmit({
       occasion: selectedOccasion,
       recipientName: recipientName.trim(),
       relationship,
-      tone: selectedTones[0] as Tone,
-      tones: selectedTones,
+      tone: (processedTones[0] || 'heartfelt') as Tone,
+      tones: processedTones,
       language,
       context: context.trim(),
     });
@@ -265,6 +270,34 @@ export const WishForm: React.FC<WishFormProps> = ({
               );
             })}
           </div>
+
+          {/* Dynamic input for custom tone style */}
+          {selectedTones.includes('custom') && (
+            <div className="pt-1.5 animate-fade-in">
+              <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block mb-1.5">
+                {language === 'hi'
+                  ? 'अपना कस्टम अंदाज़ या स्टाइल लिखें'
+                  : language === 'gu'
+                  ? 'તમારો કસ્ટમ અંદાજ કે સ્ટાઇલ લખો'
+                  : 'Describe Your Custom Tone / Style'}
+              </label>
+              <Input
+                type="text"
+                placeholder={
+                  language === 'hi'
+                    ? 'उदा. बॉलीवुड स्टाइल, शेरो-शायरी, दार्शनिक, शेक्सपियर, हल्की नोकझोंक...'
+                    : language === 'gu'
+                    ? 'દા.ત. કાવ્યાત્મક ગઝલ, વડીલ જેવી સલાહ, બોલિવૂડ મસાલા, હળવી મજાક...'
+                    : 'e.g. Shakespearean drama, Bollywood retro, Zen & calming, Savage teasing...'
+                }
+                value={customToneText}
+                onChange={(e) => setCustomToneText(e.target.value)}
+                className="h-10 text-xs sm:text-sm border-zinc-300 dark:border-zinc-700"
+                maxLength={60}
+                autoFocus
+              />
+            </div>
+          )}
         </div>
 
         {/* Seamlessly Integrated Personal Touch Field */}

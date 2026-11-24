@@ -10,7 +10,8 @@ export type Tone =
   | 'romantic'
   | 'roast'
   | 'nostalgic'
-  | 'blessed';
+  | 'blessed'
+  | 'custom';
 
 export interface Occasion {
   id: string;
