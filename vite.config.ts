@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import type { IncomingMessage, ServerResponse } from 'http';
+import { getCuratedWishes } from './src/data/sampleWishes';
 
 function extractJson(text: string) {
   let clean = text.trim();
@@ -42,12 +43,22 @@ export default defineConfig(({ mode }) => {
 
                   const toneList = Array.isArray(tones) && tones.length > 0 ? tones.join(', ') : tone;
 
+                  const fallbackRequest = {
+                    occasion,
+                    recipientName,
+                    relationship,
+                    tone: (tones?.[0] || tone) as any,
+                    tones: Array.isArray(tones) ? tones : [tone],
+                    language,
+                    context: userContext,
+                  };
+
                   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({
                       source: 'curated',
                       notice: 'Running on Curated Engine. Add GEMINI_API_KEY to your .env file to activate live Gemini AI.',
-                      wishes: getDevCuratedWishes(recipientName, occasion, language),
+                      wishes: getCuratedWishes(fallbackRequest),
                     }));
                     return;
                   }
@@ -59,16 +70,29 @@ export default defineConfig(({ mode }) => {
                       ? 'Gujarati (strictly in Gujarati script, culturally rich blessings)'
                       : 'English';
 
-                  const prompt = `Write 3 short, beautiful wishes for ${recipientName} (Occasion: ${occasion}, Relationship: ${relationship}, Tone(s): ${toneList}, Language: ${langInstruction}${userContext ? `, Context: ${userContext}` : ''}).
-Provide 3 distinct styles:
-1. Heartfelt & Warm
-2. Witty & Fun
-3. Poetic & Expressive (or Shayari in Hindi)
-Return ONLY valid JSON matching this structure:
+                  const prompt = `Write 3 unique, beautiful wishes for ${recipientName} strictly tailored to these inputs:
+- Occasion: ${occasion}
+- Relationship: ${relationship} (Adapt social etiquette, intimacy, and respect to this relationship)
+- Tone(s) Selected: "${toneList}"
+- Language: ${langInstruction}
+${userContext ? `- Personal Memory / Context: "${userContext}"` : ''}
+
+CRITICAL RULES:
+1. Every wish MUST center around the Occasion ("${occasion}") and honor the Relationship ("${relationship}").
+2. The tone of ALL 3 wishes MUST directly reflect the Tone(s) chosen: "${toneList}".
+   - If Roast/Fun was selected, provide playful, hilarious banter.
+   - If Romantic was selected, provide tender, deeply affectionate devotion.
+   - If Formal was selected, provide dignified, professional warmth.
+   - If Spiritual/Blessed was selected, provide divine prayers and peace.
+   - If a Custom Tone was entered, embody that exact persona or style!
+   - DO NOT default to generic styles if specific tones were selected.
+3. If personal context is provided, weave it naturally into the wishes!
+4. Length: 30 to 65 words per wish, with tasteful celebratory emojis.
+5. Return ONLY valid JSON matching this schema:
 {"wishes": [
-  {"id":"1", "style":"Heartfelt & Warm", "toneEmoji":"💖", "title":"Short title", "content":"Wish text with emojis"},
-  {"id":"2", "style":"Witty & Fun", "toneEmoji":"😄", "title":"Short title", "content":"Wish text with emojis"},
-  {"id":"3", "style":"Poetic & Expressive", "toneEmoji":"🪶", "title":"Short title", "content":"Wish text with emojis"}
+  {"id":"1", "style":"Specific style name matching the tone", "toneEmoji":"🎉", "title":"Short title in selected language", "content":"Wish text with emojis"},
+  {"id":"2", "style":"Second variation matching the tone", "toneEmoji":"✨", "title":"Short title in selected language", "content":"Wish text with emojis"},
+  {"id":"3", "style":"Third variation matching the tone", "toneEmoji":"💫", "title":"Short title in selected language", "content":"Wish text with emojis"}
 ]}`;
 
                   const models = ['gemini-flash-lite-latest', 'gemini-3.5-flash-lite'];
@@ -120,7 +144,7 @@ Return ONLY valid JSON matching this structure:
                   res.end(JSON.stringify({
                     source: 'curated',
                     notice: 'API Key connected! Google Gemini free-tier is currently experiencing a temporary high-demand spike (503). Showing curated master wishes in the meantime.',
-                    wishes: getDevCuratedWishes(recipientName, occasion, language),
+                    wishes: getCuratedWishes(fallbackRequest),
                   }));
                 } catch (err: any) {
                   console.error('API error:', err);
@@ -128,7 +152,14 @@ Return ONLY valid JSON matching this structure:
                   res.end(JSON.stringify({
                     source: 'curated',
                     notice: 'Recovered with curated wishes.',
-                    wishes: getDevCuratedWishes('Friend', 'celebration', 'en'),
+                    wishes: getCuratedWishes({
+                      occasion: 'birthday',
+                      recipientName: 'Friend',
+                      relationship: 'friend',
+                      tone: 'heartfelt',
+                      tones: ['heartfelt'],
+                      language: 'en',
+                    }),
                   }));
                 }
               });
@@ -141,81 +172,3 @@ Return ONLY valid JSON matching this structure:
     ],
   };
 });
-
-function getDevCuratedWishes(name: string, _occasion: string, language: string) {
-  if (language === 'gu') {
-    return [
-      {
-        id: 'gu-1',
-        style: 'હાર્દિક અને સ્નેહપૂર્ણ',
-        toneEmoji: '💖',
-        title: 'અઢળક સ્નેહ અને શુભેચ્છાઓ',
-        content: `વહાલા ${name}, આ ખાસ અવસરે તમારા જીવનમાં સુખ, શાંતિ, ઉત્તમ સ્વાસ્થ્ય અને અખૂટ સમૃદ્ધિ હંમેશા બની રહે એવી અંતઃકરણપૂર્વકની શુભકામનાઓ! તમારું દરેક સ્વપ્ન સાકાર થાય. 🌸✨`,
-      },
-      {
-        id: 'gu-2',
-        style: 'રમુજી અને મજેદાર',
-        toneEmoji: '😄',
-        title: 'જલસા કરો અને સ્મિત રાખો!',
-        content: `અરે ${name}! ઉંમર ભલે એક વર્ષ વધે કે કેલેન્ડર બદલાય, તમારો વટ હંમેશા એવો ને એવો જ રહેવો જોઈએ! આજે પાર્ટી તો બનવી જ જોઈએ! જિંદગીના દરેક પળને પૂરા ઉત્સાહથી માણો! 🥳🎉`,
-      },
-      {
-        id: 'gu-3',
-        style: 'કાવ્યાત્મક અને પ્રેરણાદાયી',
-        toneEmoji: '🪶',
-        title: 'જીવનની સુંદર સફર',
-        content: `${name}, સમયની દરેક ક્ષણ તમારા માટે ખુશીઓની સુવાસ લઈને આવે, દરેક સવાર નવી આશા આપે અને દરેક સાંજ સફળતાનો સંતોષ આપે. જીવનના આ સુંદર પંથે તમને ઈશ્વરના અનંત આશીર્વાદ મળતા રહે. 🙏💫`,
-      },
-    ];
-  }
-
-  if (language === 'hi') {
-    return [
-      {
-        id: 'hi-1',
-        style: 'दिल से व आत्मीय',
-        toneEmoji: '💖',
-        title: 'सच्चे दिल से ढेरों शुभकामनाएं',
-        content: `प्रिय ${name}, इस पावन और खास अवसर पर आपको ढेर सारा प्यार और दिल की गहराइयों से अनंत मंगलकामनाएं! ईश्वर करे आपका आने वाला हर दिन सुख, समृद्धि और अच्छी सेहत की सौगात लेकर आए। 🌺✨`,
-      },
-      {
-        id: 'hi-2',
-        style: 'मस्ती और मुस्कान',
-        toneEmoji: '😄',
-        title: 'जश्न और धमाल का दिन!',
-        content: `अरे हमारे प्यारे ${name}! साल बीतते रहेंगे लेकिन आपका अंदाज और हमारी यह शानदार बॉन्डिंग हमेशा ऐसी ही जिंदादिल रहनी चाहिए। आज के दिन सिर्फ जश्न, मिठाई और ढेर सारी खुशियां! पार्टी कब दे रहे हो? 🥳🎂`,
-      },
-      {
-        id: 'hi-3',
-        style: 'शायराना व गहराई भरा',
-        toneEmoji: '🪶',
-        title: 'दुआओं का खूबसूरत तोहफा',
-        content: `खुशियों की महक से महके हर एक पल तुम्हारा,\nसितारों की रौशनी से रोशन हो मुकद्दर तुम्हारा।\nदुआ है रब से ${name}, कामयाबी कदम चूमे हर मोड़ पर,\nऔर कभी कम न हो यह मासूम सा तबस्सुम तुम्हारा। 🌟✍️`,
-      },
-    ];
-  }
-
-  return [
-    {
-      id: 'en-1',
-      style: 'Heartfelt & Deep',
-      toneEmoji: '💖',
-      title: 'Warmest Wishes from the Heart',
-      content: `Dearest ${name}, on this wonderful celebration, I want you to know how deeply you are cherished. May your journey ahead be blessed with radiant health, lasting peace, and countless reasons to smile. You bring so much light into the world! ✨🌿`,
-    },
-    {
-      id: 'en-2',
-      style: 'Witty & High Spirits',
-      toneEmoji: '😄',
-      title: 'Cheers to Leveling Up!',
-      content: `Happy celebration, ${name}! You're like a vintage bottle of wine or that classic favorite playlist—only getting better with time! Wishing you zero stress, extra cake, and a celebration as legendary as you are. 🥂🎉`,
-    },
-    {
-      id: 'en-3',
-      style: 'Poetic & Inspiring',
-      toneEmoji: '🪶',
-      title: 'A Constellation of Dreams',
-      content: `May every step you take unfold into a tapestry of wonder, ${name}. May the horizon whisper promises of triumph, love, and courage. Keep shining with that untamed brilliance that inspires everyone around you. 🌟💫`,
-    },
-  ];
-}
