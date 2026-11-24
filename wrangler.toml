@@ -1,0 +1,6 @@
+name = "wishmaker"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
+
+[vars]
+# For production, set GEMINI_API_KEY via `wrangler pages secret put GEMINI_API_KEY`
