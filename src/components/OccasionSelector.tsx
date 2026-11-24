@@ -20,24 +20,19 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-festive-100 text-[11px] font-bold text-festive-700">
-            1
-          </span>
-          <span>
-            {language === 'hi'
-              ? 'अवसर चुनें (Select Occasion)'
-              : language === 'gu'
-              ? 'અવસર પસંદ કરો (Select Occasion)'
-              : 'Choose the Occasion'}
-          </span>
+        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          {language === 'hi'
+            ? '1. अवसर चुनें'
+            : language === 'gu'
+            ? '1. અવસર પસંદ કરો'
+            : '1. Select Occasion'}
         </label>
-        <span className="text-xs text-muted-foreground">Tap to select</span>
+        <span className="text-xs text-zinc-400">Choose one</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5">
         {OCCASIONS.map((occ) => {
           const isSelected = selectedOccasion === occ.id;
           return (
@@ -45,40 +40,21 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
               key={occ.id}
               type="button"
               onClick={() => onSelectOccasion(occ.id)}
-              className={`group relative flex flex-col items-start rounded-2xl p-3.5 text-left transition-all duration-200 outline-none ${
+              className={`flex items-center gap-2.5 rounded-lg p-2.5 text-left border transition-all duration-150 outline-none ${
                 isSelected
-                  ? 'border-2 border-festive-500 bg-festive-50/90 shadow-md shadow-festive-500/10 dark:bg-festive-950/40 dark:border-festive-500 scale-[1.02]'
-                  : 'border border-festive-200/80 bg-white/80 hover:border-festive-300 hover:bg-festive-50/40 hover:shadow-xs dark:bg-slate-900/60 dark:border-slate-800 dark:hover:border-slate-700'
+                  ? 'border-zinc-900 bg-zinc-50 text-zinc-950 ring-1 ring-zinc-900 shadow-xs dark:border-zinc-100 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-100'
+                  : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-300 dark:hover:border-zinc-700'
               }`}
             >
-              {/* Top row: Emoji & Popular badge */}
-              <div className="flex w-full items-center justify-between mb-2">
-                <span className="text-2xl transition-transform duration-200 group-hover:scale-110">
-                  {occ.icon}
-                </span>
-                {occ.popular && (
-                  <span className="rounded-full bg-amber-100/90 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-                    Popular
-                  </span>
-                )}
+              <span className="text-lg shrink-0">{occ.icon}</span>
+              <div className="min-w-0">
+                <p className="text-xs font-medium truncate">
+                  {getLocalizedTitle(occ)}
+                </p>
+                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">
+                  {occ.tag}
+                </p>
               </div>
-
-              {/* Title */}
-              <span className={`text-sm font-semibold tracking-tight ${isSelected ? 'text-festive-900 dark:text-festive-200' : 'text-foreground'}`}>
-                {getLocalizedTitle(occ)}
-              </span>
-
-              {/* Sub description */}
-              <span className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
-                {occ.description}
-              </span>
-
-              {/* Selected indicator check */}
-              {isSelected && (
-                <div className="absolute top-2.5 right-2.5 flex h-4 w-4 items-center justify-center rounded-full bg-festive-500 text-white text-[10px]">
-                  ✓
-                </div>
-              )}
             </button>
           );
         })}

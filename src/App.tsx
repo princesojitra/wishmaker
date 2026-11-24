@@ -23,7 +23,6 @@ export function App() {
 
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Sync theme with document element
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -37,19 +36,19 @@ export function App() {
     setIsToastVisible(true);
     setTimeout(() => {
       setIsToastVisible(false);
-    }, 2500);
+    }, 2000);
   };
 
-  const fireCelebrationConfetti = () => {
+  const fireMinimalConfetti = () => {
     try {
       confetti({
-        particleCount: 60,
-        spread: 70,
-        origin: { y: 0.65 },
-        colors: ['#F97316', '#F43F5E', '#FBBF24', '#10B981', '#6366F1'],
+        particleCount: 35,
+        spread: 50,
+        origin: { y: 0.7 },
+        colors: ['#18181b', '#71717a', '#a1a1aa', '#25D366'],
       });
     } catch {
-      // Ignore if canvas-confetti is unavailable
+      // Ignore
     }
   };
 
@@ -75,18 +74,15 @@ export function App() {
       if (resData.wishes && resData.wishes.length > 0) {
         setWishes(resData.wishes);
       } else {
-        // Fallback
         const fallback = getCuratedWishes(data);
         setWishes(fallback);
       }
-    } catch (err: any) {
-      console.warn('API fetch issue, using local curated engine:', err);
+    } catch {
       const fallback = getCuratedWishes(data);
       setWishes(fallback);
     } finally {
       setIsLoading(false);
-      fireCelebrationConfetti();
-      // Smooth scroll to results
+      fireMinimalConfetti();
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
@@ -96,16 +92,16 @@ export function App() {
   const handleCopyWish = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      showToast('Wish copied to clipboard! 📋');
+      showToast('Copied to clipboard');
     } catch {
-      showToast('Copied text!');
+      showToast('Copied');
     }
   };
 
   const handleShareWhatsApp = (text: string) => {
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
-    showToast('Opening WhatsApp... 💬');
+    showToast('Opening WhatsApp');
   };
 
   const handleRegenerate = () => {
@@ -115,8 +111,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
-      {/* Navigation */}
+    <div className="min-h-screen flex flex-col bg-zinc-50/50 text-zinc-900 transition-colors duration-150 dark:bg-zinc-950 dark:text-zinc-100">
       <Navbar
         currentLanguage={language}
         onLanguageChange={setLanguage}
@@ -125,22 +120,19 @@ export function App() {
       />
 
       <main className="flex-1 pb-16">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          {/* Hero Header */}
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Hero language={language} />
 
-          {/* Form Container */}
-          <div className="mt-4 rounded-3xl border border-festive-200/90 bg-white/60 p-4 sm:p-8 shadow-sm backdrop-blur-md dark:bg-slate-900/60 dark:border-slate-800">
-            {/* Step 1: Occasions Grid */}
+          {/* Form Card */}
+          <div className="rounded-2xl border border-zinc-200/90 bg-white p-5 sm:p-7 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/50">
             <OccasionSelector
               selectedOccasion={occasion}
               onSelectOccasion={setOccasion}
               language={language}
             />
 
-            <div className="my-6 border-t border-festive-100 dark:border-slate-800" />
+            <div className="my-5 border-t border-zinc-100 dark:border-zinc-800" />
 
-            {/* Step 2: Form */}
             <WishForm
               selectedOccasion={occasion}
               language={language}
@@ -151,8 +143,8 @@ export function App() {
           </div>
 
           {/* Results Anchor */}
-          <div ref={resultsRef} className="pt-8">
-            {isLoading && <LoadingSkeleton language={language} />}
+          <div ref={resultsRef} className="pt-6">
+            {isLoading && <LoadingSkeleton />}
 
             {!isLoading && wishes && wishes.length > 0 && (
               <WishResults
@@ -168,19 +160,13 @@ export function App() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-festive-200/50 py-8 text-center text-xs text-muted-foreground bg-white/40 dark:bg-slate-950/40 dark:border-slate-900">
-        <div className="mx-auto max-w-5xl px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} WishMaker — Crafted with care for celebrations worldwide.</p>
-          <div className="flex items-center gap-4">
-            <span className="text-festive-600 dark:text-festive-400 font-medium">English • हिन्दी • ગુજરાતી</span>
-            <span>•</span>
-            <span>Gemini AI & Cloudflare Ready</span>
-          </div>
+      <footer className="border-t border-zinc-200/60 py-6 text-center text-xs text-zinc-400 dark:border-zinc-800 dark:text-zinc-500">
+        <div className="mx-auto max-w-3xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p>© {new Date().getFullYear()} WishMaker. Minimalist greeting generator.</p>
+          <p>English • हिन्दी • ગુજરાતી</p>
         </div>
       </footer>
 
-      {/* Toast Notification */}
       <Toast message={toastMessage} isVisible={isToastVisible} />
     </div>
   );

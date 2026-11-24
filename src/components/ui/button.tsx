@@ -3,7 +3,7 @@ import { cn } from "../../lib/utils";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "secondary" | "outline" | "ghost" | "link" | "festive";
+  variant?: "default" | "secondary" | "outline" | "ghost" | "link" | "whatsapp";
   size?: "default" | "sm" | "lg" | "icon";
 }
 
@@ -13,25 +13,26 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-festive-400 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 disabled:pointer-events-none disabled:opacity-40 active:scale-[0.99]",
           {
-            "bg-primary text-primary-foreground shadow hover:bg-festive-600":
+            "bg-zinc-900 text-white shadow-xs hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200":
               variant === "default",
-            "bg-festive-100 text-festive-800 hover:bg-festive-200 border border-festive-200/80":
+            "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700":
               variant === "secondary",
-            "border border-border bg-background hover:bg-festive-50 hover:text-festive-900":
+            "border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800":
               variant === "outline",
-            "hover:bg-accent hover:text-accent-foreground": variant === "ghost",
-            "text-primary underline-offset-4 hover:underline":
+            "hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100":
+              variant === "ghost",
+            "text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-100":
               variant === "link",
-            "bg-gradient-to-r from-festive-500 via-rose-500 to-amber-500 text-white shadow-lg hover:shadow-festive-500/25 hover:from-festive-600 hover:to-amber-600":
-              variant === "festive",
+            "bg-[#25D366] text-white hover:bg-[#20bd5a] shadow-xs":
+              variant === "whatsapp",
           },
           {
-            "h-10 px-4 py-2": size === "default",
-            "h-8 rounded-lg px-3 text-xs": size === "sm",
-            "h-12 rounded-2xl px-6 text-base font-semibold": size === "lg",
-            "h-10 w-10 p-0": size === "icon",
+            "h-9 px-3.5 py-2": size === "default",
+            "h-8 rounded-md px-3 text-xs": size === "sm",
+            "h-11 rounded-xl px-6 text-sm font-semibold": size === "lg",
+            "h-9 w-9 p-0": size === "icon",
           },
           className
         )}

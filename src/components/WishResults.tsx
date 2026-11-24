@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { WishCard } from './WishCard';
 import { Wish, Language } from '../types/wish';
 
@@ -21,46 +21,34 @@ export const WishResults: React.FC<WishResultsProps> = ({
   onRegenerate,
 }) => {
   return (
-    <section className="space-y-6 pt-4 animate-fade-in">
+    <section className="space-y-4 pt-4 animate-fade-in">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-festive-200/80 pb-4 dark:border-slate-800">
+      <div className="flex items-center justify-between border-b border-zinc-200/80 pb-3 dark:border-zinc-800">
         <div>
-          <div className="flex items-center gap-2">
-            <h3 className="font-serif text-2xl font-bold tracking-tight text-foreground">
-              {language === 'hi'
-                ? `${recipientName} के लिए 3 खास शुभकामनाएं`
-                : language === 'gu'
-                ? `${recipientName} માટે 3 સુંદર શુભેચ્છાઓ`
-                : `3 Unique Wishes for ${recipientName}`}
-            </h3>
-            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping" />
-          </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Choose your favorite style, tweak if needed, and share directly to WhatsApp or clipboard.
+          <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+            {language === 'hi'
+              ? `${recipientName} के लिए शुभकामनाएं`
+              : language === 'gu'
+              ? `${recipientName} માટે શુભેચ્છાઓ`
+              : `Wishes for ${recipientName}`}
+          </h3>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Select a style to copy or share directly to WhatsApp.
           </p>
         </div>
 
-        {/* Source Badge & Regenerate */}
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-festive-100 px-3 py-1 text-xs font-medium text-festive-800 dark:bg-festive-950 dark:text-festive-300">
-            <Sparkles className="w-3.5 h-3.5 text-festive-600" />
-            <span>AI Personalized</span>
-          </span>
-
-          <button
-            type="button"
-            onClick={onRegenerate}
-            className="flex items-center gap-1 rounded-xl border border-festive-200 bg-white px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-festive-50 hover:text-foreground transition-all dark:bg-slate-800 dark:border-slate-700"
-            title="Generate new variations"
-          >
-            <RefreshCw className="w-3 h-3" />
-            <span>Regenerate</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onRegenerate}
+          className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
+        >
+          <RefreshCw className="w-3 h-3" />
+          <span>Regenerate</span>
+        </button>
       </div>
 
       {/* 3 Cards Grid */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3.5 md:grid-cols-3">
         {wishes.map((wish, index) => (
           <WishCard
             key={wish.id || index}
