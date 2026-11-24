@@ -20,20 +20,44 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
     return occ.title;
   };
 
+  const sectionTitles = {
+    en: {
+      title: 'Choose the Occasion',
+      subtitle: 'Select the celebration or milestone you want wishes for',
+    },
+    hi: {
+      title: 'अवसर का चयन करें',
+      subtitle: 'वह अवसर चुनें जिसके लिए आपको शुभकामना चाहिए',
+    },
+    gu: {
+      title: 'અવસર પસંદ કરો',
+      subtitle: 'જે પ્રસંગ કે ઉત્સવ માટે શુભેચ્છા જોઈએ તે પસંદ કરો',
+    },
+  };
+
+  const currentText = sectionTitles[language] || sectionTitles.en;
+
   return (
-    <div className="space-y-2.5">
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-          {language === 'hi'
-            ? '1. अवसर चुनें'
-            : language === 'gu'
-            ? '1. અવસર પસંદ કરો'
-            : '1. Select Occasion'}
-        </label>
-        <span className="text-xs text-zinc-400">Choose one</span>
+    <div className="space-y-3.5">
+      {/* High-visibility section header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold text-xs shadow-xs">
+            1
+          </span>
+          <div>
+            <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+              {currentText.title}
+            </h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              {currentText.subtitle}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5">
+      {/* Occasion Cards Grid with clean refined neutral selection */}
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
         {OCCASIONS.map((occ) => {
           const isSelected = selectedOccasion === occ.id;
           return (
@@ -41,27 +65,35 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
               key={occ.id}
               type="button"
               onClick={() => onSelectOccasion(occ.id)}
-              className={`relative flex items-center gap-2.5 rounded-lg p-2.5 text-left border transition-all duration-150 outline-none ${
+              className={`relative flex flex-col justify-between min-h-[108px] rounded-xl p-3.5 text-left border-2 transition-all duration-150 outline-none ${
                 isSelected
-                  ? 'border-indigo-600 bg-indigo-50/50 text-indigo-950 shadow-xs ring-1 ring-indigo-500/25 dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-100'
-                  : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-300 dark:hover:border-zinc-700'
+                  ? 'border-zinc-900 bg-zinc-100/80 text-zinc-950 shadow-sm ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
+                  : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-200 dark:hover:border-zinc-700'
               }`}
             >
-              <span className="text-lg shrink-0">{occ.icon}</span>
-              <div className="min-w-0 pr-4">
-                <p className={`text-xs font-medium truncate ${isSelected ? 'text-indigo-950 font-semibold dark:text-indigo-100' : ''}`}>
-                  {getLocalizedTitle(occ)}
-                </p>
-                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">
-                  {occ.tag}
-                </p>
+              <div className="flex items-start justify-between mb-2">
+                <span className="text-2xl">{occ.icon}</span>
+                {isSelected ? (
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs">
+                    <Check className="h-3 w-3 stroke-[3]" />
+                  </div>
+                ) : (
+                  occ.popular && (
+                    <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                      Popular
+                    </span>
+                  )
+                )}
               </div>
 
-              {isSelected && (
-                <div className="absolute top-2 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-indigo-600 text-white dark:bg-indigo-500">
-                  <Check className="h-2.5 w-2.5 stroke-[3]" />
-                </div>
-              )}
+              <div>
+                <p className={`text-sm font-semibold tracking-tight ${isSelected ? 'text-zinc-950 dark:text-zinc-50' : 'text-zinc-800 dark:text-zinc-200'}`}>
+                  {getLocalizedTitle(occ)}
+                </p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-snug mt-1">
+                  {occ.description}
+                </p>
+              </div>
             </button>
           );
         })}

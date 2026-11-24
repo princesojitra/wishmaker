@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles, Check } from 'lucide-react';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
@@ -25,7 +25,6 @@ export const WishForm: React.FC<WishFormProps> = ({
   const [relationship, setRelationship] = useState('friend');
   const [tone, setTone] = useState<Tone>('heartfelt');
   const [context, setContext] = useState('');
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [validationError, setValidationError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,10 +32,10 @@ export const WishForm: React.FC<WishFormProps> = ({
     if (!recipientName.trim()) {
       setValidationError(
         language === 'hi'
-          ? 'कृपया नाम लिखें'
+          ? 'कृपया जिसके लिए शुभकामना चाहिए उनका नाम लिखें'
           : language === 'gu'
-          ? 'કૃપા કરીને નામ લખો'
-          : 'Please enter a name'
+          ? 'કૃપા કરીને જેમના માટે શુભેચ્છા જોઈએ તેમનું નામ લખો'
+          : 'Please enter the recipient’s name'
       );
       return;
     }
@@ -58,82 +57,140 @@ export const WishForm: React.FC<WishFormProps> = ({
     return rel.label;
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="space-y-4">
-        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 block">
-          {language === 'hi'
-            ? '2. विवरण दर्ज करें'
-            : language === 'gu'
-            ? '2. વિગત પસંદ કરો'
-            : '2. Personalize Details'}
-        </label>
+  const sectionText = {
+    en: {
+      step2Title: 'Recipient Details',
+      step2Subtitle: 'Who are you sending this greeting to?',
+      nameLabel: 'Recipient Name *',
+      relLabel: 'Relationship',
+      step3Title: 'Language & Tone',
+      step3Subtitle: 'How would you like the wishes to sound?',
+      langLabel: 'Output Language',
+      toneLabel: 'Emotional Tone',
+      contextLabel: 'Personal Touch / Memory',
+      contextHint: 'Add an inside joke or special detail to make the wish uniquely theirs.',
+    },
+    hi: {
+      step2Title: 'पात्र विवरण',
+      step2Subtitle: 'यह शुभकामना किसके लिए है?',
+      nameLabel: 'नाम *',
+      relLabel: 'संबंध / रिश्ता',
+      step3Title: 'भाषा और अंदाज़',
+      step3Subtitle: 'शुभकामना का टोन और भाषा चुनें',
+      langLabel: 'भाषा',
+      toneLabel: 'टोन / अंदाज़',
+      contextLabel: 'विशेष संस्मरण / संदर्भ',
+      contextHint: 'कोई खास बात या अंदरूनी मज़ाक जोड़ें जिससे शुभकामना और भी आत्मीय लगे।',
+    },
+    gu: {
+      step2Title: 'વિગત',
+      step2Subtitle: 'આ શુભેચ્છા કોના માટે છે?',
+      nameLabel: 'નામ *',
+      relLabel: 'સંબંધ',
+      step3Title: 'ભાષા અને અંદાજ',
+      step3Subtitle: 'શુભેચ્છાનો અંદાજ અને ભાષા પસંદ કરો',
+      langLabel: 'ભાષા',
+      toneLabel: 'ટોન / અંદાજ',
+      contextLabel: 'ખાસ સ્મરણ / સંદર્ભ',
+      contextHint: 'કોઈ ખાસ વાત કે સંભારણું ઉમેરો જેથી શુભેચ્છા વધુ અનોખી લાગે.',
+    },
+  };
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+  const t = sectionText[language] || sectionText.en;
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Step 2: Recipient Information */}
+      <div className="space-y-3.5">
+        <div className="flex items-center gap-2.5 pb-1">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold text-xs shadow-xs">
+            2
+          </span>
+          <div>
+            <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+              {t.step2Title}
+            </h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              {t.step2Subtitle}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
           {/* Recipient Name */}
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-              {language === 'hi'
-                ? 'नाम (Name) *'
-                : language === 'gu'
-                ? 'નામ (Name) *'
-                : 'Recipient Name *'}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
+              {t.nameLabel}
             </label>
             <Input
               type="text"
               placeholder={
                 language === 'hi'
-                  ? 'उदा. रोहन, सिमरन...'
+                  ? 'उदा. रोहन, सिमरन, मम्मी...'
                   : language === 'gu'
-                  ? 'દા.ત. રોહન, પ્રિયંકા...'
-                  : 'e.g. Maya, Rohan, Mom'
+                  ? 'દા.ત. રોહન, પ્રિયંકા, મમ્મી...'
+                  : 'e.g. Maya, Rohan, Mom, Dr. Sharma'
               }
               value={recipientName}
               onChange={(e) => {
                 setRecipientName(e.target.value);
                 if (validationError) setValidationError('');
               }}
-              className={validationError ? 'border-red-500' : ''}
+              className={`h-11 text-sm border-zinc-300 dark:border-zinc-700 ${validationError ? 'border-red-500 ring-1 ring-red-500' : ''}`}
               maxLength={60}
             />
             {validationError && (
-              <p className="text-[11px] text-red-500">{validationError}</p>
+              <p className="text-xs text-red-600 font-medium">{validationError}</p>
             )}
           </div>
 
-          {/* Relationship */}
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-              {language === 'hi'
-                ? 'संबंध (Relationship)'
-                : language === 'gu'
-                ? 'સંબંધ (Relationship)'
-                : 'Relationship'}
+          {/* Relationship with spacious trailing arrow */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
+              {t.relLabel}
             </label>
-            <select
-              value={relationship}
-              onChange={(e) => setRelationship(e.target.value)}
-              className="flex h-10 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus-visible:outline-none focus-visible:border-indigo-600 focus-visible:ring-1 focus-visible:ring-indigo-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 shadow-xs"
-            >
-              {RELATIONSHIPS.map((rel) => (
-                <option key={rel.id} value={rel.id}>
-                  {getRelationshipLabel(rel)}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={relationship}
+                onChange={(e) => setRelationship(e.target.value)}
+                className="flex h-11 w-full appearance-none rounded-lg border border-zinc-300 bg-white pl-3.5 pr-10 py-2 text-sm text-zinc-900 focus-visible:outline-none focus-visible:border-zinc-800 focus-visible:ring-1 focus-visible:ring-zinc-800/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus-visible:border-zinc-200 dark:focus-visible:ring-zinc-200/20 shadow-xs cursor-pointer"
+              >
+                {RELATIONSHIPS.map((rel) => (
+                  <option key={rel.id} value={rel.id}>
+                    {getRelationshipLabel(rel)}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-zinc-100 dark:border-zinc-800" />
+
+      {/* Step 3: Language & Tone Selection */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2.5 pb-1">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold text-xs shadow-xs">
+            3
+          </span>
+          <div>
+            <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+              {t.step3Title}
+            </h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              {t.step3Subtitle}
+            </p>
           </div>
         </div>
 
         {/* Language Selection */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-            {language === 'hi'
-              ? 'भाषा (Language)'
-              : language === 'gu'
-              ? 'ભાષા (Language)'
-              : 'Language'}
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
+            {t.langLabel}
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2.5">
             {LANGUAGES.map((lang) => {
               const isSelected = language === lang.id;
               return (
@@ -141,13 +198,15 @@ export const WishForm: React.FC<WishFormProps> = ({
                   key={lang.id}
                   type="button"
                   onClick={() => onLanguageChange(lang.id)}
-                  className={`flex items-center justify-center gap-1.5 rounded-lg py-2 px-3 text-xs font-medium border transition-all ${
+                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-semibold border-2 transition-all ${
                     isSelected
-                      ? 'border-indigo-600 bg-indigo-50/60 text-indigo-950 font-semibold shadow-xs ring-1 ring-indigo-500/20 dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-100'
-                      : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800'
+                      ? 'border-zinc-900 bg-zinc-100/80 text-zinc-950 shadow-xs ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
+                      : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
+                  <span className="text-base">{lang.flag}</span>
                   <span>{lang.native}</span>
+                  {isSelected && <Check className="h-3.5 w-3.5 text-zinc-900 dark:text-zinc-100 ml-0.5" />}
                 </button>
               );
             })}
@@ -155,88 +214,80 @@ export const WishForm: React.FC<WishFormProps> = ({
         </div>
 
         {/* Tone Selector */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-            {language === 'hi'
-              ? 'टोन / अंदाज़ (Tone)'
-              : language === 'gu'
-              ? 'ટોન / અંદાજ (Tone)'
-              : 'Tone'}
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
+            {t.toneLabel}
           </label>
-          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-5">
-            {TONES.map((t) => {
-              const isSelected = tone === t.id;
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+            {TONES.map((toneItem) => {
+              const isSelected = tone === toneItem.id;
               return (
                 <button
-                  key={t.id}
+                  key={toneItem.id}
                   type="button"
-                  onClick={() => setTone(t.id)}
-                  className={`flex items-center justify-center gap-1.5 rounded-lg py-2 px-2 text-center border text-xs font-medium transition-all ${
+                  onClick={() => setTone(toneItem.id)}
+                  className={`flex flex-col items-center justify-center rounded-xl p-2.5 text-center border-2 text-xs transition-all ${
                     isSelected
-                      ? 'border-indigo-600 bg-indigo-50/60 text-indigo-950 font-semibold shadow-xs ring-1 ring-indigo-500/20 dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-100'
-                      : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800'
+                      ? 'border-zinc-900 bg-zinc-100/80 text-zinc-950 font-semibold shadow-xs ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
+                      : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
-                  <span>{t.emoji}</span>
-                  <span>{t.label}</span>
+                  <span className="text-xl mb-1">{toneItem.emoji}</span>
+                  <span className="font-medium">{toneItem.label}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Optional Context Accordion */}
-        <div className="pt-1">
-          <button
-            type="button"
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
-          >
-            <span>{showAdvanced ? 'Hide note' : '+ Add custom note or inside joke (Optional)'}</span>
-            {showAdvanced ? (
-              <ChevronUp className="w-3.5 h-3.5" />
-            ) : (
-              <ChevronDown className="w-3.5 h-3.5" />
-            )}
-          </button>
-
-          {showAdvanced && (
-            <div className="mt-2 animate-fade-in">
-              <Textarea
-                rows={2}
-                placeholder={
-                  language === 'hi'
-                    ? 'उदा. चाय का शौकीन है, 30 साल पूरे हुए...'
-                    : language === 'gu'
-                    ? 'દા.ત. ચા નો શોખીન છે, ૩૦ વર્ષ પૂરા થયા...'
-                    : 'e.g. Loves chai, turning 30, loves mountain treks...'
-                }
-                value={context}
-                onChange={(e) => setContext(e.target.value)}
-                maxLength={200}
-              />
-            </div>
-          )}
+        {/* Seamlessly Integrated Personal Touch Field */}
+        <div className="space-y-1.5 pt-1">
+          <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
+            {t.contextLabel}
+          </label>
+          <Textarea
+            rows={2}
+            placeholder={
+              language === 'hi'
+                ? 'जैसे: वह चाय का शौकीन है, 30 साल का हो रहा है, हाल ही में पदोन्नति मिली है...'
+                : language === 'gu'
+                ? 'જેમ કે: ચા નો શોખીન છે, ૩૦ વર્ષ પૂરા થયા, નવી નોકરી શરૂ કરી...'
+                : 'e.g. Loves chai, turning 30, loves mountain treks, started a new company...'
+            }
+            value={context}
+            onChange={(e) => setContext(e.target.value)}
+            maxLength={200}
+            className="border-zinc-300 dark:border-zinc-700 placeholder:text-zinc-400"
+          />
+          <p className="text-[11px] text-zinc-500">
+            {t.contextHint}
+          </p>
         </div>
       </div>
 
-      {/* Submit Button */}
+      {/* Primary Action Button */}
       <div className="pt-2">
         <Button
           type="submit"
           size="lg"
           disabled={isLoading}
-          className="w-full text-sm font-medium py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs dark:bg-indigo-500 dark:hover:bg-indigo-600"
+          className="w-full text-base font-semibold py-3.5 h-12 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-sm dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 transition-all"
         >
           {isLoading ? (
-            <div className="flex items-center gap-2">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              <span>Generating wishes...</span>
+            <div className="flex items-center gap-2.5">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white dark:border-zinc-900 border-t-transparent" />
+              <span>Weaving Your 3 Wishes...</span>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
-              <span>Generate 3 Wishes</span>
+              <span>
+                {language === 'hi'
+                  ? '3 खास शुभकामनाएं बनाएं'
+                  : language === 'gu'
+                  ? '3 સુંદર શુભેચ્છાઓ બનાવો'
+                  : 'Generate 3 Beautiful Wishes'}
+              </span>
             </div>
           )}
         </Button>
