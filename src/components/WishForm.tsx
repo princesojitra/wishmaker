@@ -225,7 +225,7 @@ export const WishForm: React.FC<WishFormProps> = ({
           </div>
         </div>
 
-        {/* Tone Selector - Horizontal Scrollable Multiple Selection */}
+        {/* Tone Selector - Responsive Wrapping Multi-Select Chips */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
@@ -233,39 +233,37 @@ export const WishForm: React.FC<WishFormProps> = ({
             </label>
             <span className="text-[11px] text-zinc-500 font-medium">
               {language === 'hi'
-                ? 'एक या अधिक टोन चुनें (Scroll →)'
+                ? 'एक या अधिक टोन चुनें'
                 : language === 'gu'
-                ? 'એક કે વધુ ટોન પસંદ કરો (Scroll →)'
-                : 'Select one or more (Scroll →)'}
+                ? 'એક કે વધુ ટોન પસંદ કરો'
+                : 'Select one or more'}
             </span>
           </div>
 
-          <div className="relative -mx-1 px-1">
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-0.5 scroll-smooth">
-              {TONES.map((toneItem) => {
-                const isSelected = selectedTones.includes(toneItem.id);
-                return (
-                  <button
-                    key={toneItem.id}
-                    type="button"
-                    onClick={() => handleToggleTone(toneItem.id)}
-                    className={`flex items-center gap-2 whitespace-nowrap shrink-0 rounded-xl px-3.5 py-2.5 text-xs font-medium border-2 transition-all cursor-pointer ${
-                      isSelected
-                        ? 'border-zinc-900 bg-zinc-100/90 text-zinc-950 font-semibold shadow-xs ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
-                        : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700'
-                    }`}
-                  >
-                    <span className="text-base">{toneItem.emoji}</span>
-                    <span>{toneItem.label}</span>
-                    {isSelected && (
-                      <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
-                        <Check className="h-2 w-2 stroke-[3]" />
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="flex flex-wrap gap-2">
+            {TONES.map((toneItem) => {
+              const isSelected = selectedTones.includes(toneItem.id);
+              return (
+                <button
+                  key={toneItem.id}
+                  type="button"
+                  onClick={() => handleToggleTone(toneItem.id)}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium border-2 transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-zinc-900 bg-zinc-100/90 text-zinc-950 font-semibold shadow-xs ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
+                      : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700'
+                  }`}
+                >
+                  <span className="text-sm">{toneItem.emoji}</span>
+                  <span>{toneItem.label}</span>
+                  {isSelected && (
+                    <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 ml-0.5">
+                      <Check className="h-2 w-2 stroke-[3]" />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
