@@ -14,6 +14,17 @@ interface Env {
   GEMINI_API_KEY?: string;
 }
 
+function extractJson(text: string) {
+  let clean = text.trim();
+  clean = clean.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+  const firstBrace = clean.indexOf('{');
+  const lastBrace = clean.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1) {
+    clean = clean.substring(firstBrace, lastBrace + 1);
+  }
+  return JSON.parse(clean);
+}
+
 export async function onRequestPost(context: { request: Request; env: Env }) {
   try {
     const { request, env } = context;
@@ -30,8 +41,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
 
     const apiKey = env.GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : undefined);
 
-    if (!apiKey) {
-      // Graceful fallback to curated engine if no API key is configured
+    if (!apiKey || apiKey === 'your_gemini_api_key_here') {
       return new Response(
         JSON.stringify({
           source: 'curated',
@@ -44,100 +54,89 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       );
     }
 
-    // Call Gemini API
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-    const systemPrompt = `You are an elite, emotionally articulate, culturally nuanced greetings writer and poet specializing in English, Hindi, and Gujarati celebrations.
-Craft exactly 3 distinct, beautifully written wishes for the following recipient:
+    const systemPrompt = `You are an elite, empathetic, and culturally nuanced greeting writer and poet.
+Create 3 completely unique, beautifully phrased wishes for:
 - Occasion: ${occasion}
 - Recipient Name: ${recipientName}
 - Relationship to sender: ${relationship}
-- Primary Requested Tone: ${tone}
-- Language: ${language === 'hi' ? 'Hindi (Devanagari script)' : language === 'gu' ? 'Gujarati (Gujarati script)' : 'English'}
+- Tone requested: ${tone}
+- Language: ${language === 'hi' ? 'Hindi (strictly in Devanagari script, natural flow, heartwarming)' : language === 'gu' ? 'Gujarati (strictly in Gujarati script, culturally rich blessings)' : 'English'}
 - Extra Memory / Context: ${userContext || 'None'}
 
 REQUIREMENTS:
-1. Provide 3 completely distinct styles/angles:
-   - Card 1: Warm, emotional, deeply heartfelt.
-   - Card 2: Clever, witty, smiling, playful banter.
-   - Card 3: Poetic, lyrical, or inspirational (for Hindi, include an authentic shayari/doha feel; for Gujarati, culturally rich warmth; for English, poetic cadence).
-2. For Hindi and Gujarati, strictly write in their respective native scripts (Devanagari / Gujarati script). Do NOT use robotic translation. Use genuine vernacular phrasing, idioms, and emotional resonance.
-3. Keep each wish between 30 and 80 words. Perfect length for messaging on WhatsApp or greeting cards.
-4. Output MUST be valid JSON matching this exact structure:
+1. Card 1 Style: "Heartfelt & Warm" (Deep emotion, genuine blessings)
+2. Card 2 Style: "Witty & Fun" (Playful banter, clever smile)
+3. Card 3 Style: "Poetic & Expressive" (Lyrical, shayari style in Hindi, inspiring rhythm)
+4. Keep each wish between 30 and 70 words, formatted with relevant celebratory emojis.
+5. You MUST return ONLY a valid JSON object matching this schema:
 {
   "wishes": [
     {
       "id": "wish-1",
-      "style": "Heartfelt & Classic",
+      "style": "Heartfelt & Warm",
       "toneEmoji": "💖",
-      "title": "Title in selected language",
-      "content": "Full wish text with warm emojis..."
+      "title": "Short title in selected language",
+      "content": "Full wish text..."
     },
     {
       "id": "wish-2",
-      "style": "Playful & Witty",
+      "style": "Witty & Fun",
       "toneEmoji": "😄",
-      "title": "Title in selected language",
-      "content": "Full wish text with smiling emojis..."
+      "title": "Short title in selected language",
+      "content": "Full wish text..."
     },
     {
       "id": "wish-3",
       "style": "Poetic & Expressive",
       "toneEmoji": "🪶",
-      "title": "Title in selected language",
+      "title": "Short title in selected language",
       "content": "Full wish text..."
     }
   ]
 }`;
 
-    const geminiResponse = await fetch(geminiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: systemPrompt }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.85,
-          responseMimeType: 'application/json',
-        },
-      }),
-    });
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`;
 
-    if (!geminiResponse.ok) {
-      const errText = await geminiResponse.text();
-      console.error('Gemini API Error:', errText);
-      return new Response(
-        JSON.stringify({
-          source: 'curated',
-          notice: 'Gemini API temporary limit reached. Using curated fallback.',
-          wishes: generateCuratedFallback(recipientName, occasion, language),
-        }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const geminiResponse = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: systemPrompt }] }],
+          }),
+        });
+
+        if (geminiResponse.ok) {
+          const geminiData: any = await geminiResponse.json();
+          const candidateText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (candidateText) {
+            const parsed = extractJson(candidateText);
+            if (parsed.wishes && parsed.wishes.length > 0) {
+              return new Response(
+                JSON.stringify({
+                  source: 'gemini',
+                  wishes: parsed.wishes,
+                }),
+                {
+                  headers: { 'Content-Type': 'application/json' },
+                }
+              );
+            }
+          }
+        }
+      } catch (err) {
+        console.warn(`Attempt ${attempt} error:`, err);
+      }
     }
-
-    const geminiData: any = await geminiResponse.json();
-    const candidateText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!candidateText) {
-      throw new Error('Empty response from Gemini');
-    }
-
-    const parsed = JSON.parse(candidateText);
 
     return new Response(
       JSON.stringify({
-        source: 'gemini',
-        wishes: parsed.wishes || [],
+        source: 'curated',
+        notice: 'Gemini temporary high demand. Showing curated wishes.',
+        wishes: generateCuratedFallback(recipientName, occasion, language),
       }),
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
+      { headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error: any) {
     console.error('API Handler Error:', error);

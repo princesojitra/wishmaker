@@ -76,9 +76,15 @@ export const WishResults: React.FC<WishResultsProps> = ({
           <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
           <div>
             <p className="font-medium">{notice}</p>
-            <p className="text-[11px] text-amber-700/90 dark:text-amber-400/90 mt-0.5">
-              Add your <code className="rounded bg-amber-100 px-1 py-0.2 font-mono text-[10px] dark:bg-amber-900">GEMINI_API_KEY</code> to the environment to unlock dynamic real-time Gemini LLM calls.
-            </p>
+            {notice.includes('Add GEMINI_API_KEY') ? (
+              <p className="text-[11px] text-amber-700/90 dark:text-amber-400/90 mt-0.5">
+                Add your <code className="rounded bg-amber-100 px-1 py-0.2 font-mono text-[10px] dark:bg-amber-900">GEMINI_API_KEY</code> to <code className="rounded bg-amber-100 px-1 py-0.2 font-mono text-[10px] dark:bg-amber-900">.env</code> to activate live Gemini AI generation.
+              </p>
+            ) : (
+              <p className="text-[11px] text-emerald-700/90 dark:text-emerald-400/90 mt-0.5 font-medium">
+                ✓ Your API key is loaded and verified in <code className="rounded bg-emerald-100 px-1 py-0.2 font-mono text-[10px] dark:bg-emerald-900">.env</code>.
+              </p>
+            )}
           </div>
         </div>
       )}

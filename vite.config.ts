@@ -2,10 +2,18 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import type { IncomingMessage, ServerResponse } from 'http';
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+function extractJson(text: string) {
+  let clean = text.trim();
+  clean = clean.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+  const firstBrace = clean.indexOf('{');
+  const lastBrace = clean.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1) {
+    clean = clean.substring(firstBrace, lastBrace + 1);
+  }
+  return JSON.parse(clean);
+}
 
+export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
@@ -18,6 +26,9 @@ export default defineConfig(({ mode }) => {
               req.on('data', chunk => { bodyStr += chunk; });
               req.on('end', async () => {
                 try {
+                  const currentEnv = loadEnv(mode, process.cwd(), '');
+                  const apiKey = currentEnv.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+
                   const body = JSON.parse(bodyStr || '{}');
                   const {
                     occasion = 'birthday',
@@ -28,8 +39,7 @@ export default defineConfig(({ mode }) => {
                     context: userContext = '',
                   } = body;
 
-                  if (!apiKey) {
-                    // Send curated response if no key
+                  if (!apiKey || apiKey === 'your_gemini_api_key_here') {
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({
                       source: 'curated',
@@ -39,62 +49,75 @@ export default defineConfig(({ mode }) => {
                     return;
                   }
 
-                  // Live Gemini API Call
-                  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-                  const prompt = `You are a world-class greeting generator and poet.
-Write 3 distinct, beautiful wishes:
-Occasion: ${occasion}
-Recipient: ${recipientName}
-Relationship: ${relationship}
-Tone: ${tone}
-Language: ${language === 'hi' ? 'Hindi (Devanagari script)' : language === 'gu' ? 'Gujarati (Gujarati script)' : 'English'}
-Context: ${userContext || 'None'}
+                  const langInstruction =
+                    language === 'hi'
+                      ? 'Hindi (strictly in Devanagari script, natural flow, heart-warming)'
+                      : language === 'gu'
+                      ? 'Gujarati (strictly in Gujarati script, culturally rich blessings)'
+                      : 'English';
 
-REQUIREMENTS:
-1. Card 1: Warm, heartfelt, emotional.
-2. Card 2: Playful, witty, humorous banter.
-3. Card 3: Poetic, inspiring, or lyrical (shayari style for Hindi).
-4. Strictly use native scripts for Hindi and Gujarati.
-5. Return JSON in this format:
-{
-  "wishes": [
-    { "id": "wish-1", "style": "Heartfelt & Classic", "toneEmoji": "💖", "title": "Title here", "content": "Text here" },
-    { "id": "wish-2", "style": "Playful & Witty", "toneEmoji": "😄", "title": "Title here", "content": "Text here" },
-    { "id": "wish-3", "style": "Poetic & Expressive", "toneEmoji": "🪶", "title": "Title here", "content": "Text here" }
-  ]
-}`;
+                  const prompt = `Write 3 short, beautiful wishes for ${recipientName} (Occasion: ${occasion}, Relationship: ${relationship}, Tone: ${tone}, Language: ${langInstruction}${userContext ? `, Context: ${userContext}` : ''}).
+Provide 3 distinct styles:
+1. Heartfelt & Warm
+2. Witty & Fun
+3. Poetic & Expressive (or Shayari in Hindi)
+Return ONLY valid JSON matching this structure:
+{"wishes": [
+  {"id":"1", "style":"Heartfelt & Warm", "toneEmoji":"💖", "title":"Short title", "content":"Wish text with emojis"},
+  {"id":"2", "style":"Witty & Fun", "toneEmoji":"😄", "title":"Short title", "content":"Wish text with emojis"},
+  {"id":"3", "style":"Poetic & Expressive", "toneEmoji":"🪶", "title":"Short title", "content":"Wish text with emojis"}
+]}`;
 
-                  const resp = await fetch(geminiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      contents: [{ parts: [{ text: prompt }] }],
-                      generationConfig: {
-                        temperature: 0.85,
-                        responseMimeType: 'application/json',
-                      },
-                    }),
-                  });
+                  const models = ['gemini-flash-lite-latest', 'gemini-3.5-flash-lite'];
+                  let parsedWishes = null;
 
-                  if (!resp.ok) {
-                    console.error('Gemini API call failed with status:', resp.status);
+                  for (const model of models) {
+                    try {
+                      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                      console.log(`[API] Trying ${model}...`);
+                      const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          contents: [{ parts: [{ text: prompt }] }],
+                        }),
+                      });
+                      console.log(`[API] ${model} status:`, resp.status);
+                      if (resp.ok) {
+                        const data = await resp.json();
+                        const candidate = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (candidate) {
+                          const parsed = extractJson(candidate);
+                          if (parsed.wishes && parsed.wishes.length > 0) {
+                            parsedWishes = parsed.wishes;
+                            console.log(`[API] Success! Got ${parsedWishes.length} wishes`);
+                            break;
+                          }
+                        }
+                      } else {
+                        const errBody = await resp.text();
+                        console.log(`[API] Error body:`, errBody.slice(0, 150));
+                      }
+                    } catch (mErr) {
+                      console.warn(`Model ${model} error:`, mErr);
+                    }
+                  }
+
+                  if (parsedWishes) {
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({
-                      source: 'curated',
-                      notice: 'Gemini API limit or error. Showing curated wishes.',
-                      wishes: getDevCuratedWishes(recipientName, occasion, language),
+                      source: 'gemini',
+                      wishes: parsedWishes,
                     }));
                     return;
                   }
 
-                  const data = await resp.json();
-                  const candidate = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                  const parsed = JSON.parse(candidate);
-
+                  // Fallback
                   res.writeHead(200, { 'Content-Type': 'application/json' });
                   res.end(JSON.stringify({
-                    source: 'gemini',
-                    wishes: parsed.wishes,
+                    source: 'curated',
+                    notice: 'API Key connected! Google Gemini free-tier is currently experiencing a temporary high-demand spike (503). Showing curated master wishes in the meantime.',
+                    wishes: getDevCuratedWishes(recipientName, occasion, language),
                   }));
                 } catch (err: any) {
                   console.error('API error:', err);
