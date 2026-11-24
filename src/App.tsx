@@ -6,7 +6,7 @@ import { OccasionSelector } from './components/OccasionSelector';
 import { WishForm } from './components/WishForm';
 import { WishResults } from './components/WishResults';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
-import { Toast } from './components/Toast';
+import { Toast, ToastType } from './components/Toast';
 import { Wish, WishRequest, Language } from './types/wish';
 import { getCuratedWishes } from './data/sampleWishes';
 
@@ -20,7 +20,9 @@ export function App() {
   const [currentRecipient, setCurrentRecipient] = useState('');
   const [lastRequest, setLastRequest] = useState<WishRequest | null>(null);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<ToastType>('success');
   const [isToastVisible, setIsToastVisible] = useState(false);
+  const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -32,12 +34,16 @@ export function App() {
     }
   }, [isDark]);
 
-  const showToast = (msg: string) => {
+  const showToast = (msg: string, type: ToastType = 'success') => {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
     setToastMessage(msg);
+    setToastType(type);
     setIsToastVisible(true);
-    setTimeout(() => {
+    toastTimerRef.current = setTimeout(() => {
       setIsToastVisible(false);
-    }, 2000);
+    }, type === 'warning' || type === 'error' ? 3500 : 2200);
   };
 
   const fireMinimalConfetti = () => {
@@ -146,10 +152,12 @@ export function App() {
 
             <WishForm
               selectedOccasion={occasion}
+              customOccasionText={customOccasion}
               language={language}
               onLanguageChange={setLanguage}
               onSubmit={handleGenerateWishes}
               isLoading={isLoading}
+              onShowToast={showToast}
             />
           </div>
 
@@ -178,7 +186,12 @@ export function App() {
         </div>
       </footer>
 
-      <Toast message={toastMessage} isVisible={isToastVisible} />
+      <Toast
+        message={toastMessage}
+        isVisible={isToastVisible}
+        type={toastType}
+        onClose={() => setIsToastVisible(false)}
+      />
     </div>
   );
 }

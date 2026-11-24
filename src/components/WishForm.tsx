@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronDown, Sparkles, Check } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ChevronDown, Sparkles, Check, AlertCircle } from 'lucide-react';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
@@ -8,30 +8,47 @@ import { WishRequest, Language, Tone } from '../types/wish';
 
 interface WishFormProps {
   selectedOccasion: string;
+  customOccasionText?: string;
   language: Language;
   onLanguageChange: (lang: Language) => void;
   onSubmit: (data: WishRequest) => void;
   isLoading: boolean;
+  onShowToast?: (msg: string, type?: 'success' | 'warning' | 'error' | 'info') => void;
 }
 
 export const WishForm: React.FC<WishFormProps> = ({
   selectedOccasion,
+  customOccasionText,
   language,
   onLanguageChange,
   onSubmit,
   isLoading,
+  onShowToast,
 }) => {
   const [recipientName, setRecipientName] = useState('');
   const [relationship, setRelationship] = useState('friend');
   const [selectedTones, setSelectedTones] = useState<string[]>(['heartfelt']);
   const [customToneText, setCustomToneText] = useState('');
   const [context, setContext] = useState('');
-  const [validationError, setValidationError] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [customToneError, setCustomToneError] = useState('');
+  const [shakeField, setShakeField] = useState<'name' | 'tone' | null>(null);
+
+  const recipientInputRef = useRef<HTMLInputElement>(null);
+  const customToneInputRef = useRef<HTMLInputElement>(null);
+
+  const triggerShake = (field: 'name' | 'tone') => {
+    setShakeField(field);
+    setTimeout(() => setShakeField(null), 500);
+  };
 
   const handleToggleTone = (id: string) => {
     setSelectedTones((prev) => {
       if (prev.includes(id)) {
         if (prev.length === 1) return prev; // Keep at least one tone active
+        if (id === 'custom') {
+          setCustomToneError('');
+        }
         return prev.filter((t) => t !== id);
       } else {
         return [...prev, id];
@@ -41,17 +58,57 @@ export const WishForm: React.FC<WishFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 1. Validate custom occasion if selected
+    if (selectedOccasion === 'custom' && (!customOccasionText || !customOccasionText.trim())) {
+      const msg =
+        language === 'hi'
+          ? 'कृपया अपने खास अवसर का नाम लिखें (अनिवार्य)'
+          : language === 'gu'
+          ? 'કૃપા કરીને તમારા ખાસ પ્રસંગનું નામ લખો (ફરજિયાત)'
+          : 'Please enter your custom occasion name (mandatory)';
+      onShowToast?.(msg, 'warning');
+      const occInput = document.getElementById('custom-occasion-input');
+      occInput?.focus();
+      occInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      occInput?.classList.add('animate-shake');
+      setTimeout(() => occInput?.classList.remove('animate-shake'), 500);
+      return;
+    }
+
+    // 2. Validate recipient name
     if (!recipientName.trim()) {
-      setValidationError(
+      const msg =
         language === 'hi'
           ? 'कृपया जिसके लिए शुभकामना चाहिए उनका नाम लिखें'
           : language === 'gu'
           ? 'કૃપા કરીને જેમના માટે શુભેચ્છા જોઈએ તેમનું નામ લખો'
-          : 'Please enter the recipient’s name'
-      );
+          : 'Please enter the recipient’s name';
+      setNameError(msg);
+      triggerShake('name');
+      onShowToast?.(msg, 'warning');
+      recipientInputRef.current?.focus();
+      recipientInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-    setValidationError('');
+    setNameError('');
+
+    // 3. Validate custom tone (mandatory when custom tone is selected)
+    if (selectedTones.includes('custom') && !customToneText.trim()) {
+      const msg =
+        language === 'hi'
+          ? 'कस्टम स्टाइल अनिवार्य है — कृपया अपना पसंदीदा अंदाज़ लिखें'
+          : language === 'gu'
+          ? 'કસ્ટમ સ્ટાઇલ ફરજિયાત છે — કૃપા કરીને તમારી શૈલી કે અંદાજ લખો'
+          : 'Custom tone is mandatory — please describe your preferred style';
+      setCustomToneError(msg);
+      triggerShake('tone');
+      onShowToast?.(msg, 'warning');
+      customToneInputRef.current?.focus();
+      customToneInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    setCustomToneError('');
 
     const processedTones = selectedTones.map((t) =>
       t === 'custom' && customToneText.trim() ? customToneText.trim() : t
@@ -135,29 +192,38 @@ export const WishForm: React.FC<WishFormProps> = ({
 
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
           {/* Recipient Name */}
+          {/* Recipient Name */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">
               {t.nameLabel}
             </label>
-            <Input
-              type="text"
-              placeholder={
-                language === 'hi'
-                  ? 'उदा. रोहन, सिमरन, मम्मी...'
-                  : language === 'gu'
-                  ? 'દા.ત. રોહન, પ્રિયંકા, મમ્મી...'
-                  : 'e.g. Maya, Rohan, Mom, Dr. Sharma'
-              }
-              value={recipientName}
-              onChange={(e) => {
-                setRecipientName(e.target.value);
-                if (validationError) setValidationError('');
-              }}
-              className={`h-11 text-sm border-zinc-300 dark:border-zinc-700 ${validationError ? 'border-red-500 ring-1 ring-red-500' : ''}`}
-              maxLength={60}
-            />
-            {validationError && (
-              <p className="text-xs text-red-600 font-medium">{validationError}</p>
+            <div className={shakeField === 'name' ? 'animate-shake' : ''}>
+              <Input
+                ref={recipientInputRef}
+                type="text"
+                placeholder={
+                  language === 'hi'
+                    ? 'उदा. रोहन, सिमरन, मम्मी...'
+                    : language === 'gu'
+                    ? 'દા.ત. રોહન, પ્રિયંકા, મમ્મી...'
+                    : 'e.g. Maya, Rohan, Mom, Dr. Sharma'
+                }
+                value={recipientName}
+                onChange={(e) => {
+                  setRecipientName(e.target.value);
+                  if (nameError) setNameError('');
+                }}
+                className={`h-11 text-sm border-zinc-300 dark:border-zinc-700 ${
+                  nameError ? 'border-red-500 ring-2 ring-red-500/20 dark:border-red-400 dark:ring-red-400/30' : ''
+                }`}
+                maxLength={60}
+              />
+            </div>
+            {nameError && (
+              <p className="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1.5 animate-fade-in">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                <span>{nameError}</span>
+              </p>
             )}
           </div>
 
@@ -273,15 +339,22 @@ export const WishForm: React.FC<WishFormProps> = ({
 
           {/* Dynamic input for custom tone style */}
           {selectedTones.includes('custom') && (
-            <div className="pt-1.5 animate-fade-in">
-              <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block mb-1.5">
-                {language === 'hi'
-                  ? 'अपना कस्टम अंदाज़ या स्टाइल लिखें'
-                  : language === 'gu'
-                  ? 'તમારો કસ્ટમ અંદાજ કે સ્ટાઇલ લખો'
-                  : 'Describe Your Custom Tone / Style'}
+            <div className={`pt-1.5 animate-fade-in ${shakeField === 'tone' ? 'animate-shake' : ''}`}>
+              <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider flex items-center justify-between mb-1.5">
+                <span>
+                  {language === 'hi'
+                    ? 'अपना कस्टम अंदाज़ या स्टाइल लिखें'
+                    : language === 'gu'
+                    ? 'તમારો કસ્ટમ અંદાજ કે સ્ટાઇલ લખો'
+                    : 'Describe Your Custom Tone / Style'}
+                  <span className="text-red-500 ml-1 font-bold">*</span>
+                </span>
+                <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 normal-case">
+                  {language === 'hi' ? '(अनिवार्य)' : language === 'gu' ? '(ફરજિયાત)' : '(Mandatory)'}
+                </span>
               </label>
               <Input
+                ref={customToneInputRef}
                 type="text"
                 placeholder={
                   language === 'hi'
@@ -291,11 +364,24 @@ export const WishForm: React.FC<WishFormProps> = ({
                     : 'e.g. Shakespearean drama, Bollywood retro, Zen & calming, Savage teasing...'
                 }
                 value={customToneText}
-                onChange={(e) => setCustomToneText(e.target.value)}
-                className="h-10 text-xs sm:text-sm border-zinc-300 dark:border-zinc-700"
+                onChange={(e) => {
+                  setCustomToneText(e.target.value);
+                  if (customToneError) setCustomToneError('');
+                }}
+                className={`h-10 text-xs sm:text-sm border-zinc-300 dark:border-zinc-700 ${
+                  customToneError
+                    ? 'border-red-500 ring-2 ring-red-500/20 dark:border-red-400 dark:ring-red-400/30'
+                    : ''
+                }`}
                 maxLength={60}
                 autoFocus
               />
+              {customToneError && (
+                <p className="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1.5 mt-1.5 animate-fade-in">
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                  <span>{customToneError}</span>
+                </p>
+              )}
             </div>
           )}
         </div>
