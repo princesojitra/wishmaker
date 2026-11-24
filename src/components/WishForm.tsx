@@ -331,18 +331,13 @@ export const WishForm: React.FC<WishFormProps> = ({
           {/* Dynamic input for custom tone */}
           {selectedTones.includes('custom') && (
             <div className={`pt-1.5 animate-fade-in ${shakeField === 'tone' ? 'animate-shake' : ''}`}>
-              <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider flex items-center justify-between mb-1.5">
-                <span>
-                  {language === 'hi'
-                    ? 'अपना कस्टम टोन लिखें'
-                    : language === 'gu'
-                    ? 'તમારો કસ્ટમ ટોન લખો'
-                    : 'Describe Your Custom Tone'}
-                  <span className="text-red-500 ml-1 font-bold">*</span>
-                </span>
-                <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 normal-case">
-                  {language === 'hi' ? '(अनिवार्य)' : language === 'gu' ? '(ફરજિયાત)' : '(Mandatory)'}
-                </span>
+              <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block mb-1.5">
+                {language === 'hi'
+                  ? 'अपना कस्टम टोन लिखें'
+                  : language === 'gu'
+                  ? 'તમારો કસ્ટમ ટોન લખો'
+                  : 'Describe Your Custom Tone'}
+                <span className="text-zinc-900 dark:text-zinc-100 ml-1 font-bold">*</span>
               </label>
               <Input
                 ref={customToneInputRef}
