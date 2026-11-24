@@ -131,6 +131,12 @@ export const WishForm: React.FC<WishFormProps> = ({
     return rel.label;
   };
 
+  const getToneLabel = (toneItem: typeof TONES[0]) => {
+    if (language === 'hi') return toneItem.labelHi;
+    if (language === 'gu') return toneItem.labelGu;
+    return toneItem.label;
+  };
+
   const sectionText = {
     en: {
       step2Title: 'Recipient Details',
@@ -317,7 +323,7 @@ export const WishForm: React.FC<WishFormProps> = ({
                   }`}
                 >
                   <span className="text-sm">{toneItem.emoji}</span>
-                  <span>{toneItem.label}</span>
+                  <span>{getToneLabel(toneItem)}</span>
                   {isSelected && (
                     <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 ml-0.5">
                       <Check className="h-2 w-2 stroke-[3]" />

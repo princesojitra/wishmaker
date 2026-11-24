@@ -13,6 +13,15 @@ export type Tone =
   | 'blessed'
   | 'custom';
 
+export interface ToneItem {
+  id: Tone;
+  label: string;
+  labelHi: string;
+  labelGu: string;
+  emoji: string;
+  description: string;
+}
+
 export interface Occasion {
   id: string;
   title: string;

@@ -1,4 +1,4 @@
-import { Occasion } from '../types/wish';
+import { Occasion, ToneItem } from '../types/wish';
 
 export const OCCASIONS: Occasion[] = [
   {
@@ -125,70 +125,92 @@ export const RELATIONSHIPS = [
   { id: 'general', label: 'Anyone Special', labelHi: 'विशेष व्यक्ति', labelGu: 'ખાસ વ્યક્તિ' },
 ];
 
-export const TONES = [
+export const TONES: ToneItem[] = [
   {
-    id: 'heartfelt' as const,
+    id: 'heartfelt',
     label: 'Heartfelt',
+    labelHi: 'दिल से',
+    labelGu: 'હૃદયપૂર્વક',
     emoji: '💖',
     description: 'Warm, emotional & genuinely touching',
   },
   {
-    id: 'witty' as const,
+    id: 'witty',
     label: 'Witty & Fun',
+    labelHi: 'मज़ेदार',
+    labelGu: 'રમૂજી',
     emoji: '😄',
     description: 'Playful banter, clever jokes & high energy',
   },
   {
-    id: 'poetic' as const,
+    id: 'poetic',
     label: 'Poetic / Shayari',
+    labelHi: 'शायराना',
+    labelGu: 'શાયરી / કાવ્યાત્મક',
     emoji: '🪶',
     description: 'Lyrical depth, metaphors & classic rhythm',
   },
   {
-    id: 'inspirational' as const,
+    id: 'inspirational',
     label: 'Inspirational',
+    labelHi: 'प्रेरणादायक',
+    labelGu: 'પ્રેરણાદાયી',
     emoji: '🌟',
     description: 'Motivating, empowering & ambitious',
   },
   {
-    id: 'romantic' as const,
+    id: 'romantic',
     label: 'Romantic',
+    labelHi: 'रोमांटिक',
+    labelGu: 'રોમેન્ટિક',
     emoji: '🌹',
     description: 'Sweet, tender & deeply affectionate',
   },
   {
-    id: 'roast' as const,
+    id: 'roast',
     label: 'Playful Roast',
+    labelHi: 'हल्की नोकझोंक',
+    labelGu: 'તીખી મજાક / રોસ્ટ',
     emoji: '😈',
     description: 'Hilarious friendly teasing & sarcasm',
   },
   {
-    id: 'formal' as const,
+    id: 'formal',
     label: 'Formal',
+    labelHi: 'औपचारिक',
+    labelGu: 'ઔપચારિક',
     emoji: '👔',
     description: 'Polite, professional & dignified warmth',
   },
   {
-    id: 'short' as const,
+    id: 'short',
     label: 'Short & Punchy',
+    labelHi: 'संक्षिप्त / वन-लाइनर',
+    labelGu: 'ટૂંકી / વન-લાઈનર',
     emoji: '⚡',
     description: 'Crisp one-liners perfect for quick chats',
   },
   {
-    id: 'nostalgic' as const,
+    id: 'nostalgic',
     label: 'Nostalgic',
+    labelHi: 'पुरानी यादें',
+    labelGu: 'યાદોની સફર',
     emoji: '🕰️',
     description: 'Cherishing shared memories & old times',
   },
   {
-    id: 'blessed' as const,
+    id: 'blessed',
     label: 'Spiritual / Blessed',
+    labelHi: 'आशीर्वाद',
+    labelGu: 'આશીર્વાદ',
     emoji: '🙏',
     description: 'Peace, prayers & divine blessings',
   },
   {
-    id: 'custom' as const,
+    id: 'custom',
     label: 'Custom Tone',
+    labelHi: 'कस्टम टोन',
+    labelGu: 'કસ્ટમ ટોન',
     emoji: '✍️',
     description: 'Enter any custom tone or persona',
   },
