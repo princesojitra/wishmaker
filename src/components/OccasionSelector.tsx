@@ -2,16 +2,21 @@ import React from 'react';
 import { Check } from 'lucide-react';
 import { OCCASIONS } from '../data/occasions';
 import { Language } from '../types/wish';
+import { Input } from './ui/input';
 
 interface OccasionSelectorProps {
   selectedOccasion: string;
   onSelectOccasion: (id: string) => void;
+  customOccasionText?: string;
+  onCustomOccasionChange?: (text: string) => void;
   language: Language;
 }
 
 export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
   selectedOccasion,
   onSelectOccasion,
+  customOccasionText = '',
+  onCustomOccasionChange,
   language,
 }) => {
   const getLocalizedTitle = (occ: typeof OCCASIONS[0]) => {
@@ -23,15 +28,15 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
   const sectionTitles = {
     en: {
       title: 'Choose the Occasion',
-      subtitle: 'Select the celebration or milestone you want wishes for',
+      subtitle: 'Select from popular events or create your own custom occasion',
     },
     hi: {
       title: 'अवसर का चयन करें',
-      subtitle: 'वह अवसर चुनें जिसके लिए आपको शुभकामना चाहिए',
+      subtitle: 'लोकप्रिय अवसरों में से चुनें या अपना कोई भी खास अवसर लिखें',
     },
     gu: {
       title: 'અવસર પસંદ કરો',
-      subtitle: 'જે પ્રસંગ કે ઉત્સવ માટે શુભેચ્છા જોઈએ તે પસંદ કરો',
+      subtitle: 'જાણીતા પ્રસંગોમાંથી પસંદ કરો અથવા તમારો પોતાનો પ્રસંગ લખો',
     },
   };
 
@@ -56,7 +61,7 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
         </div>
       </div>
 
-      {/* Occasion Cards Grid with clean refined neutral selection */}
+      {/* Occasion Cards Grid */}
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
         {OCCASIONS.map((occ) => {
           const isSelected = selectedOccasion === occ.id;
@@ -98,6 +103,33 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
           );
         })}
       </div>
+
+      {/* Dynamic input for custom occasion */}
+      {selectedOccasion === 'custom' && (
+        <div className="pt-1.5 animate-fade-in">
+          <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block mb-1.5">
+            {language === 'hi'
+              ? 'अपने अवसर का नाम लिखें'
+              : language === 'gu'
+              ? 'તમારા પ્રસંગનું નામ લખો'
+              : 'Name Your Custom Occasion'}
+          </label>
+          <Input
+            type="text"
+            placeholder={
+              language === 'hi'
+                ? 'उदा. मैराथन जीत, नई दुकान का उद्घाटन, पहली कार, पीएचडी पूरी होना...'
+                : language === 'gu'
+                ? 'દા.ત. નવી ગાડી, દુકાનનું ઉદ્ઘાટન, નવી કંપની શરૂ કરી...'
+                : 'e.g. Marathon finish, Book launch, First home, Startup funding...'
+            }
+            value={customOccasionText}
+            onChange={(e) => onCustomOccasionChange?.(e.target.value)}
+            className="h-11 border-zinc-300 dark:border-zinc-700 text-sm"
+            maxLength={60}
+          />
+        </div>
+      )}
     </div>
   );
 };

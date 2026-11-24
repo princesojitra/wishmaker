@@ -12,6 +12,7 @@ import { getCuratedWishes } from './data/sampleWishes';
 
 export function App() {
   const [occasion, setOccasion] = useState('birthday');
+  const [customOccasion, setCustomOccasion] = useState('');
   const [language, setLanguage] = useState<Language>('en');
   const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,16 +54,24 @@ export function App() {
   };
 
   const handleGenerateWishes = async (data: WishRequest) => {
+    const finalData: WishRequest = {
+      ...data,
+      occasion:
+        occasion === 'custom' && customOccasion.trim()
+          ? customOccasion.trim()
+          : data.occasion,
+    };
+
     setIsLoading(true);
     setWishes(null);
-    setCurrentRecipient(data.recipientName);
-    setLastRequest(data);
+    setCurrentRecipient(finalData.recipientName);
+    setLastRequest(finalData);
 
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(finalData),
       });
 
       if (!response.ok) {
@@ -74,11 +83,11 @@ export function App() {
       if (resData.wishes && resData.wishes.length > 0) {
         setWishes(resData.wishes);
       } else {
-        const fallback = getCuratedWishes(data);
+        const fallback = getCuratedWishes(finalData);
         setWishes(fallback);
       }
     } catch {
-      const fallback = getCuratedWishes(data);
+      const fallback = getCuratedWishes(finalData);
       setWishes(fallback);
     } finally {
       setIsLoading(false);
@@ -128,6 +137,8 @@ export function App() {
             <OccasionSelector
               selectedOccasion={occasion}
               onSelectOccasion={setOccasion}
+              customOccasionText={customOccasion}
+              onCustomOccasionChange={setCustomOccasion}
               language={language}
             />
 
