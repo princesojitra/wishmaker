@@ -119,6 +119,42 @@ const OCCASION_META: Record<string, OccasionDetails> = {
     themeHi: '365 नए सुनहरे अवसरों, नई उमंग और अनंत खुशियों का वर्ष',
     themeGu: 'નવા ૩૬૫ દિવસોમાં પ્રગતિ, સ્નેહ અને સમૃદ્ધિની નવી આશા',
   },
+  friendship: {
+    titleEn: 'Friendship Celebration',
+    titleHi: 'अनमोल मित्रता',
+    titleGu: 'સચ્ચી મિત્રતા',
+    emoji: '👥',
+    themeEn: 'unbreakable bond, shared laughs, and unconditional support',
+    themeHi: 'अटूट दोस्ती, हंसी-मज़ाक और हर कदम पर एक-दूजे का साथ',
+    themeGu: 'સાચી ભાઈબંધી, અવિરત સાથ અને મન મૂકીને વિતાવેલી પળો',
+  },
+  congratulations: {
+    titleEn: 'Hearty Congratulations',
+    titleHi: 'हार्दिक बधाई व शुभकामनाएं',
+    titleGu: 'હાર્દિક અભિનંદન',
+    emoji: '🏆',
+    themeEn: 'outstanding achievement, hard work, and brilliant success',
+    themeHi: 'शानदार उपलब्धि, अटूट लगन और गौरवपूर्ण सफलता',
+    themeGu: 'અદભુત સિદ્ધિ, ઉજ્જવળ સફળતા અને પરિશ્રમનું સુવર્ણ ફળ',
+  },
+  thank_you: {
+    titleEn: 'Heartfelt Thank You',
+    titleHi: 'हार्दिक धन्यवाद व आभार',
+    titleGu: 'અંતઃકરણપૂર્વક આભાર',
+    emoji: '🌸',
+    themeEn: 'genuine gratitude, kindness, and deep appreciation',
+    themeHi: 'सच्चा आभार, आपके स्नेह और अमूल्य सहयोग के लिए धन्यवाद',
+    themeGu: 'આપના સ્નેહ, નિસ્વાર્થ સાથ અને ઉમદા સહકાર બદલ દિલથી આભાર',
+  },
+  just_because: {
+    titleEn: 'Thinking of You',
+    titleHi: 'यूं ही — खास आपके लिए',
+    titleGu: 'બસ એમ જ — તમારી યાદમાં',
+    emoji: '💗',
+    themeEn: 'a warm reminder of care, joy, and positive vibes',
+    themeHi: 'बिना किसी वजह के, बस आपको यह याद दिलाने के लिए कि आप बहुत खास हैं',
+    themeGu: 'કોઈ કારણ વગર, માત્ર એ યાદ અપાવવા કે તમે હૃદયની ખૂબ નજીક છો',
+  },
 };
 
 function getSalutation(name: string, rel: string, lang: string): string {

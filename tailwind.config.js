@@ -50,6 +50,9 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
+        display: ['Plus Jakarta Sans', 'sans-serif'],
+        script: ['"Dancing Script"', '"Caveat"', 'cursive'],
         hindi: ['Noto Sans Devanagari', 'sans-serif'],
         gujarati: ['Noto Sans Gujarati', 'sans-serif'],
       }

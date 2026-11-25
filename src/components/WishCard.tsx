@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, MessageCircle, Edit3, RotateCcw } from 'lucide-react';
-import { Card, CardHeader, CardContent, CardFooter } from './ui/card';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
+import { Copy, Check, MessageCircle, Heart, Edit3 } from 'lucide-react';
 import { Wish, Language } from '../types/wish';
 
 interface WishCardProps {
@@ -13,8 +10,45 @@ interface WishCardProps {
   onShareWhatsApp: (text: string) => void;
 }
 
+const CARD_STYLES = [
+  {
+    // Peach / Amber Tint
+    heartColor: 'text-[#FB923C] fill-[#FB923C] dark:text-amber-400 dark:fill-amber-400',
+    bgTint:
+      'bg-[#FFFBF5] dark:bg-[#20150e] border-[#FED7AA]/80 dark:border-amber-600/30 shadow-xs dark:shadow-[0_0_24px_rgba(245,158,11,0.06)]',
+    hoverBorder: 'hover:border-[#FDBA74] dark:hover:border-amber-500/60',
+    titleColor: 'text-zinc-900 dark:text-amber-100',
+    actionBtn:
+      'dark:border-amber-800/40 dark:bg-amber-950/60 dark:text-amber-200 dark:hover:bg-amber-900/60 dark:hover:text-white',
+    footerBorder: 'border-amber-200/50 dark:border-amber-900/30',
+  },
+  {
+    // Sky Blue Tint
+    heartColor: 'text-[#38BDF8] fill-[#38BDF8] dark:text-sky-400 dark:fill-sky-400',
+    bgTint:
+      'bg-[#F0F9FF] dark:bg-[#0c1928] border-[#BAE6FD]/80 dark:border-sky-500/30 shadow-xs dark:shadow-[0_0_24px_rgba(56,189,248,0.06)]',
+    hoverBorder: 'hover:border-[#7DD3FC] dark:hover:border-sky-400/60',
+    titleColor: 'text-zinc-900 dark:text-sky-100',
+    actionBtn:
+      'dark:border-sky-800/40 dark:bg-sky-950/60 dark:text-sky-200 dark:hover:bg-sky-900/60 dark:hover:text-white',
+    footerBorder: 'border-sky-200/50 dark:border-sky-900/30',
+  },
+  {
+    // Lilac / Purple Tint
+    heartColor: 'text-[#C084FC] fill-[#C084FC] dark:text-purple-400 dark:fill-purple-400',
+    bgTint:
+      'bg-[#FAF5FF] dark:bg-[#1a122a] border-[#E9D5FF]/80 dark:border-purple-500/30 shadow-xs dark:shadow-[0_0_24px_rgba(192,132,252,0.06)]',
+    hoverBorder: 'hover:border-[#D8B4FE] dark:hover:border-purple-400/60',
+    titleColor: 'text-zinc-900 dark:text-purple-100',
+    actionBtn:
+      'dark:border-purple-800/40 dark:bg-purple-950/60 dark:text-purple-200 dark:hover:bg-purple-900/60 dark:hover:text-white',
+    footerBorder: 'border-purple-200/50 dark:border-purple-900/30',
+  },
+];
+
 export const WishCard: React.FC<WishCardProps> = ({
   wish,
+  index,
   language,
   onCopy,
   onShareWhatsApp,
@@ -22,6 +56,8 @@ export const WishCard: React.FC<WishCardProps> = ({
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(wish.content);
+
+  const style = CARD_STYLES[index % CARD_STYLES.length];
 
   const handleCopy = () => {
     onCopy(editedContent);
@@ -39,104 +75,104 @@ export const WishCard: React.FC<WishCardProps> = ({
   };
 
   const langClass =
-    language === 'hi' ? 'lang-hi' : language === 'gu' ? 'lang-gu' : 'font-sans';
+    language === 'hi' ? 'font-hindi' : language === 'gu' ? 'font-gujarati' : 'font-sans';
 
   return (
-    <Card className="flex flex-col justify-between overflow-hidden border border-zinc-200 bg-white hover:border-zinc-300 transition-all dark:border-zinc-800 dark:bg-zinc-900/60 shadow-xs h-full">
-      <CardHeader className="p-4 pb-2">
-        <div className="flex items-center justify-between gap-2">
-          <Badge variant="secondary" className="text-[11px] font-medium px-2 py-0.5">
-            <span className="mr-1">{wish.toneEmoji || '✨'}</span>
-            <span>{wish.style}</span>
-          </Badge>
+    <div
+      className={`rounded-2xl p-5 border transition-all duration-150 flex flex-col justify-between h-full select-none ${style.bgTint} ${style.hoverBorder}`}
+    >
+      <div className="space-y-3 flex-1 flex flex-col">
+        {/* Top Header Row: Heart Icon on left, Quick Actions on right */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Heart className={`w-5 h-5 ${style.heartColor}`} />
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setIsEditing(!isEditing)}
-            className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
-          >
-            <Edit3 className="w-3 h-3" />
-            <span>{isEditing ? 'Done' : 'Edit'}</span>
-          </button>
+          <div className="flex items-center gap-1.5">
+            {/* Edit Button */}
+            <button
+              type="button"
+              onClick={() => setIsEditing(!isEditing)}
+              title={isEditing ? 'Done editing' : 'Edit text'}
+              className={`flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200/80 bg-white/90 text-zinc-500 hover:text-zinc-950 hover:bg-white transition-colors cursor-pointer shadow-2xs ${style.actionBtn}`}
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Copy Button */}
+            <button
+              type="button"
+              onClick={handleCopy}
+              title="Copy wish"
+              className={`flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200/80 bg-white/90 text-zinc-600 hover:text-zinc-950 hover:bg-white transition-colors cursor-pointer shadow-2xs ${style.actionBtn}`}
+            >
+              {copied ? (
+                <Check className="w-4 h-4 text-emerald-500 stroke-[2.5]" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+            </button>
+
+            {/* WhatsApp Share Button */}
+            <button
+              type="button"
+              onClick={handleWhatsApp}
+              title="Share on WhatsApp"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-200/80 bg-white/90 text-[#25D366] hover:bg-emerald-50 dark:border-emerald-800/40 dark:bg-emerald-950/60 dark:text-[#25D366] dark:hover:bg-emerald-900/50 transition-colors cursor-pointer shadow-2xs"
+            >
+              <MessageCircle className="w-4 h-4 fill-[#25D366]/10" />
+            </button>
+          </div>
         </div>
 
-        <h4 className="text-sm font-medium text-zinc-900 dark:text-zinc-100 tracking-tight pt-2 line-clamp-1">
+        {/* Wish Title */}
+        <h3 className={`text-sm sm:text-base font-bold ${style.titleColor} tracking-tight`}>
           {wish.title}
-        </h4>
-      </CardHeader>
+        </h3>
 
-      <CardContent className="p-4 pt-1 flex-1">
-        {isEditing ? (
-          <div className="space-y-2">
-            <textarea
-              value={editedContent}
-              onChange={(e) => setEditedContent(e.target.value)}
-              className={`w-full rounded-lg border border-zinc-200 bg-zinc-50 p-2.5 text-xs text-zinc-900 focus-visible:outline-none focus-visible:border-indigo-600 focus-visible:ring-1 focus-visible:ring-indigo-600/30 min-h-[120px] ${langClass} dark:bg-zinc-800 dark:text-zinc-100 dark:border-zinc-700`}
-            />
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={handleReset}
-                className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-700"
-              >
-                <RotateCcw className="w-3 h-3" />
-                <span>Reset</span>
-              </button>
+        {/* Wish Content Body */}
+        <div className="flex-1 flex flex-col">
+          {isEditing ? (
+            <div className="space-y-2 pt-1 flex-1 flex flex-col justify-between">
+              <textarea
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
+                className="w-full flex-1 min-h-[140px] rounded-xl border border-zinc-300 bg-white p-3 text-xs sm:text-sm text-zinc-900 focus-visible:outline-none focus-visible:border-violet-600 focus-visible:ring-1 focus-visible:ring-violet-600/20 dark:border-zinc-700 dark:bg-zinc-800/90 dark:text-zinc-100 resize-none"
+                rows={5}
+                autoFocus
+              />
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700 transition-colors cursor-pointer"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                >
+                  Reset
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div
-            className={`whitespace-pre-line text-xs sm:text-sm text-zinc-600 leading-relaxed dark:text-zinc-300 ${langClass} min-h-[90px]`}
-          >
-            {editedContent}
-          </div>
-        )}
-      </CardContent>
-
-      <CardFooter className="p-4 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/40 dark:bg-zinc-900/40 flex items-center justify-between gap-2">
-        <span className="text-[10px] text-zinc-400">
-          {editedContent.length} chars
-        </span>
-
-        <div className="flex items-center gap-1.5">
-          {/* Copy Button */}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            className={`text-xs gap-1.5 h-8 px-2.5 transition-all ${
-              copied
-                ? 'border-emerald-600 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-medium'
-                : ''
-            }`}
-          >
-            {copied ? (
-              <>
-                <Check className="h-3 w-3" />
-                <span>Copied</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-3 w-3" />
-                <span>Copy</span>
-              </>
-            )}
-          </Button>
-
-          {/* WhatsApp Share Button */}
-          <Button
-            type="button"
-            variant="whatsapp"
-            size="sm"
-            onClick={handleWhatsApp}
-            className="text-xs gap-1 h-8 px-2.5"
-          >
-            <MessageCircle className="h-3 w-3 fill-current" />
-            <span>WhatsApp</span>
-          </Button>
+          ) : (
+            <p className={`text-xs sm:text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed ${langClass}`}>
+              {editedContent}
+            </p>
+          )}
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+
+      {/* Subtle Footer */}
+      <div
+        className={`pt-3.5 mt-3 border-t flex items-center justify-between text-[11px] text-zinc-400 dark:text-zinc-400 font-medium ${style.footerBorder}`}
+      >
+        <span>{editedContent.length} chars</span>
+        <span className="capitalize">{wish.style || 'Heartfelt'}</span>
+      </div>
+    </div>
   );
 };

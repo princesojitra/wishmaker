@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sparkles, Check } from 'lucide-react';
 import { Language } from '../types/wish';
 
 interface HeroProps {
@@ -6,44 +7,77 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ language }) => {
-  const titles = {
+  const content = {
     en: {
-      tag: 'AI-Powered Greeting Studio',
-      main: 'Thoughtful greetings, composed in seconds.',
-      sub: 'Generate personalized wishes with distinct tones in English, Hindi, and Gujarati. Ready for WhatsApp or cards.',
+      badge: 'Multilingual AI Greeting Studio',
+      headingPre: 'Make Every',
+      headingAccent: 'Wish',
+      headingPost: 'Feel Special.',
+      sub: "Create personalized, heartfelt wishes for birthdays, anniversaries, festivals and life's special moments — in English, Hindi & Gujarati.",
+      trust1: 'Personalized & Nuanced',
+      trust2: '3 Indian Languages',
+      trust3: 'Instant WhatsApp Share',
     },
     hi: {
-      tag: 'एआई ग्रीटिंग स्टूडियो',
-      main: 'हर खास मौके के लिए दिल से निकले खूबसूरत शब्द।',
-      sub: 'अंग्रेजी, हिन्दी और गुजराती में पाएं आत्मीय व शायराना शुभकामनाएं।',
+      badge: 'बहुभाषी एआई शुभकामना स्टूडियो',
+      headingPre: 'हर',
+      headingAccent: 'शुभकामना',
+      headingPost: 'बने बेहद खास।',
+      sub: 'जन्मदिन, सालगिरह और पावन त्योहारों के लिए दिल को छू लेने वाले व्यक्तिगत संदेश — हिंदी, गुजराती और अंग्रेज़ी में।',
+      trust1: 'आत्मीय व निजी भाव',
+      trust2: 'तीन भाषाएं',
+      trust3: 'व्हाट्सएप पर तुरंत शेयर',
     },
     gu: {
-      tag: 'AI ગ્રીટિંગ સ્ટુડિયો',
-      main: 'લાગણીસભર અને સ્નેહપૂર્ણ શુભેચ્છાઓ, એક ક્ષણમાં।',
-      sub: 'ગુજરાતી, હિન્દી અને અંગ્રેજીમાં મેળવો સ્નેહપૂર્ણ અને કાવ્યાત્મક શુભેચ્છાઓ.',
+      badge: 'બહુભાષી AI શુભેચ્છા સ્ટુડિયો',
+      headingPre: 'દરેક',
+      headingAccent: 'શુભેચ્છા',
+      headingPost: 'બને યાદગાર.',
+      sub: 'જન્મદિવસ, લગ્નતિથિ અને પાવન તહેવારો માટે હૃદયસ્પર્શી શુભેચ્છાઓ — ગુજરાતી, હિન્દી અને અંગ્રેજીમાં.',
+      trust1: 'સ્નેહસભર અને આત્મીય',
+      trust2: 'ત્રણ ભાષાઓ',
+      trust3: 'વોટ્સએપ પર તુરંત શેર',
     },
   };
 
-  const text = titles[language] || titles.en;
+  const t = content[language] || content.en;
 
   return (
-    <section className="pt-8 pb-6 sm:pt-12 sm:pb-8 text-center">
-      <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        {/* Subtle pill */}
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 mb-4">
-          <span className="flex h-1.5 w-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100" />
-          <span>{text.tag}</span>
-        </div>
+    <section className="pt-6 pb-6 text-center space-y-4">
+      {/* Pill Badge */}
+      <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-200/80 bg-violet-50/80 px-3.5 py-1 text-xs font-semibold text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300 shadow-2xs">
+        <Sparkles className="h-3.5 w-3.5 text-violet-500 animate-pulse" />
+        <span>{t.badge}</span>
+      </div>
 
-        {/* Heading */}
-        <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 leading-tight mb-3">
-          {text.main}
-        </h1>
+      {/* Main Headline */}
+      <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-[1.15] max-w-2xl mx-auto">
+        {t.headingPre}{' '}
+        <span className="font-serif italic text-pink-600 dark:text-pink-400 font-normal">
+          {t.headingAccent}
+        </span>{' '}
+        {t.headingPost}
+      </h1>
 
-        {/* Subtitle */}
-        <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-lg mx-auto">
-          {text.sub}
-        </p>
+      {/* Subtitle */}
+      <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-xl mx-auto px-2">
+        {t.sub}
+      </p>
+
+      {/* Trust Badges */}
+      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-1 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+        <span className="inline-flex items-center gap-1.5">
+          <Check className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 stroke-[3]" />
+          <span>{t.trust1}</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Check className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 stroke-[3]" />
+          <span>{t.trust2}</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Check className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 stroke-[3]" />
+          <span>{t.trust3}</span>
+        </span>
       </div>
     </section>
   );

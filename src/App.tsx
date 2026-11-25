@@ -44,16 +44,16 @@ export function App() {
     setIsToastVisible(true);
     toastTimerRef.current = setTimeout(() => {
       setIsToastVisible(false);
-    }, type === 'warning' || type === 'error' ? 3500 : 2200);
+    }, type === 'warning' || type === 'error' ? 3500 : 2000);
   };
 
   const fireMinimalConfetti = () => {
     try {
       confetti({
-        particleCount: 35,
-        spread: 50,
+        particleCount: 40,
+        spread: 60,
         origin: { y: 0.7 },
-        colors: ['#18181b', '#71717a', '#a1a1aa', '#25D366'],
+        colors: ['#F43F5E', '#A855F7', '#FBBF24', '#25D366'],
       });
     } catch {
       // Ignore
@@ -101,7 +101,7 @@ export function App() {
       fireMinimalConfetti();
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      }, 150);
     }
   };
 
@@ -145,20 +145,23 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-50/50 text-zinc-900 transition-colors duration-150 dark:bg-zinc-950 dark:text-zinc-100">
+    <div className="min-h-screen flex flex-col bg-zinc-50/60 text-zinc-900 transition-colors duration-150 dark:bg-zinc-950 dark:text-zinc-100 font-sans">
       <Navbar
         currentLanguage={language}
         onLanguageChange={setLanguage}
         isDark={isDark}
         onToggleTheme={() => setIsDark(!isDark)}
+        onGoHome={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       />
 
       <main className="flex-1 pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 space-y-8">
+          {/* Hero Banner */}
           <Hero language={language} />
 
-          {/* Form Card */}
-          <div className="rounded-2xl border border-zinc-200/90 bg-white p-5 sm:p-7 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/50">
+          {/* Unified Generator Studio Card */}
+          <div className="max-w-3xl mx-auto w-full rounded-3xl border border-zinc-200/90 bg-white p-6 sm:p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/70 space-y-6">
+            {/* Occasion Selector */}
             <OccasionSelector
               selectedOccasion={occasion}
               onSelectOccasion={setOccasion}
@@ -167,11 +170,11 @@ export function App() {
               language={language}
             />
 
-            <div className="my-5 border-t border-zinc-100 dark:border-zinc-800" />
+            <div className="border-t border-zinc-100 dark:border-zinc-800/80" />
 
+            {/* Personalization Form */}
             <WishForm
               selectedOccasion={occasion}
-              customOccasionText={customOccasion}
               language={language}
               onLanguageChange={setLanguage}
               onSubmit={handleFormSubmit}
@@ -180,13 +183,14 @@ export function App() {
           </div>
 
           {/* Results Anchor */}
-          <div ref={resultsRef} className="pt-6">
+          <div ref={resultsRef} className="pt-2">
             {isLoading && <LoadingSkeleton />}
 
             {!isLoading && wishes && wishes.length > 0 && (
               <WishResults
                 wishes={wishes}
                 recipientName={currentRecipient}
+                occasion={occasion}
                 language={language}
                 onCopy={handleCopyWish}
                 onShareWhatsApp={handleShareWhatsApp}
@@ -197,13 +201,21 @@ export function App() {
         </div>
       </main>
 
-      <footer className="border-t border-zinc-200/60 py-6 text-center text-xs text-zinc-400 dark:border-zinc-800 dark:text-zinc-500">
+      {/* Footer */}
+      <footer className="border-t border-zinc-200/60 py-6 text-center text-xs text-zinc-400 dark:border-zinc-800 dark:text-zinc-500 bg-white/40 dark:bg-zinc-950/40">
         <div className="mx-auto max-w-3xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© {new Date().getFullYear()} WishMaker. Minimalist greeting generator.</p>
-          <p>English • हिन्दी • ગુજરાતી</p>
+          <p>© {new Date().getFullYear()} WishMaker. AI Greeting & Wishes Generator.</p>
+          <p className="flex items-center gap-2">
+            <span>English</span>
+            <span>•</span>
+            <span>हिन्दी</span>
+            <span>•</span>
+            <span>ગુજરાતી</span>
+          </p>
         </div>
       </footer>
 
+      {/* Toast Notification */}
       <Toast
         message={toastMessage}
         isVisible={isToastVisible}

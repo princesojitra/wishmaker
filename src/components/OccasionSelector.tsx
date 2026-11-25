@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check } from 'lucide-react';
+import { X } from 'lucide-react';
 import { OCCASIONS } from '../data/occasions';
 import { Language } from '../types/wish';
 import { Input } from './ui/input';
@@ -25,112 +25,96 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
     return occ.title;
   };
 
-  const sectionTitles = {
+  const labels = {
     en: {
-      title: 'Choose the Occasion',
-      subtitle: 'Select from popular events or create your own custom occasion',
+      label: 'Occasion',
+      customPlaceholder: 'What are you celebrating? (e.g. Housewarming, Marathon, Pet adoption...)',
+      customLabel: 'Custom Event',
     },
     hi: {
-      title: 'अवसर का चयन करें',
-      subtitle: 'लोकप्रिय अवसरों में से चुनें या अपना कोई भी खास अवसर लिखें',
+      label: 'अवसर',
+      customPlaceholder: 'आप क्या मना रहे हैं? (उदा. गृह प्रवेश, मैराथन, नई कार...)',
+      customLabel: 'अन्य अवसर',
     },
     gu: {
-      title: 'અવસર પસંદ કરો',
-      subtitle: 'જાણીતા પ્રસંગોમાંથી પસંદ કરો અથવા તમારો પોતાનો પ્રસંગ લખો',
+      label: 'અવસર',
+      customPlaceholder: 'તમે શું ઉજવી રહ્યા છો? (દા.ત. ગૃહ પ્રવેશ, મેરેથોન, નવી કાર...)',
+      customLabel: 'અન્ય પ્રસંગ',
     },
   };
 
-  const currentText = sectionTitles[language] || sectionTitles.en;
+  const t = labels[language] || labels.en;
+  const primaryOccasions = OCCASIONS.filter((o) => o.id !== 'custom').slice(0, 8);
+  const isCustomActive = selectedOccasion === 'custom';
 
   return (
-    <div className="space-y-3.5">
-      {/* High-visibility section header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold text-xs shadow-xs">
-            1
-          </span>
-          <div>
-            <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
-              {currentText.title}
-            </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              {currentText.subtitle}
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="space-y-3">
+      {/* Prominent Bold Occasion Label */}
+      <label className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 block">
+        {t.label}
+      </label>
 
-      {/* Occasion Cards Grid */}
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
-        {OCCASIONS.map((occ) => {
+      {/* Occasion Pills Strip */}
+      <div className="flex flex-wrap items-center gap-2">
+        {primaryOccasions.map((occ) => {
           const isSelected = selectedOccasion === occ.id;
           return (
             <button
               key={occ.id}
               type="button"
               onClick={() => onSelectOccasion(occ.id)}
-              className={`relative flex flex-col justify-between h-[122px] w-full rounded-xl p-3 sm:p-3.5 text-left border transition-all duration-150 outline-none cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer select-none ${
                 isSelected
-                  ? 'border-zinc-400 bg-zinc-50/90 text-zinc-950 shadow-xs ring-1 ring-zinc-400/25 dark:border-zinc-500 dark:bg-zinc-800/70 dark:text-zinc-50 dark:ring-zinc-500/25'
-                  : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-200 dark:hover:border-zinc-700'
+                  ? 'bg-violet-600 text-white shadow-md shadow-violet-500/25 ring-2 ring-violet-400/40 transform -translate-y-0.5'
+                  : 'bg-zinc-100/90 text-zinc-800 hover:bg-zinc-200/80 hover:text-zinc-950 border border-zinc-200/70 dark:bg-zinc-800/80 dark:text-zinc-200 dark:border-zinc-700 dark:hover:bg-zinc-700'
               }`}
             >
-              <div className="flex items-start justify-between w-full h-6 shrink-0">
-                <span className="text-2xl leading-none select-none">{occ.icon}</span>
-                {isSelected ? (
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900 shadow-xs shrink-0">
-                    <Check className="h-3 w-3 stroke-[3]" />
-                  </div>
-                ) : (
-                  occ.popular && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 bg-zinc-100 px-2 py-0.5 text-[10px] font-bold tracking-wide text-zinc-800 shadow-2xs dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 shrink-0">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                      <span>Popular</span>
-                    </span>
-                  )
-                )}
-              </div>
-
-              <div className="w-full shrink-0">
-                <p className={`text-sm font-semibold tracking-tight truncate leading-tight ${isSelected ? 'text-zinc-950 dark:text-zinc-50' : 'text-zinc-800 dark:text-zinc-200'}`}>
-                  {getLocalizedTitle(occ)}
-                </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-snug mt-1 line-clamp-2 h-8 overflow-hidden">
-                  {occ.description}
-                </p>
-              </div>
+              <span className="text-sm leading-none">{occ.icon}</span>
+              <span>{getLocalizedTitle(occ)}</span>
             </button>
           );
         })}
+
+        {/* Custom Pill */}
+        <button
+          type="button"
+          onClick={() => onSelectOccasion('custom')}
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer select-none border ${
+            isCustomActive
+              ? 'bg-violet-600 text-white border-violet-600 shadow-md shadow-violet-500/25 ring-2 ring-violet-400/40 transform -translate-y-0.5'
+              : 'border-zinc-200/90 bg-zinc-100/90 text-zinc-800 hover:bg-zinc-200/80 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-200'
+          }`}
+        >
+          <span>✍️</span>
+          <span>{customOccasionText && isCustomActive ? customOccasionText : t.customLabel}</span>
+        </button>
       </div>
 
-      {/* Dynamic input for custom occasion */}
-      {selectedOccasion === 'custom' && (
+      {/* In-place Custom Occasion Input */}
+      {isCustomActive && (
         <div className="pt-1.5 animate-fade-in">
-          <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block mb-1.5">
-            {language === 'hi'
-              ? 'अपने अवसर का नाम लिखें'
-              : language === 'gu'
-              ? 'તમારા પ્રસંગનું નામ લખો'
-              : 'Name Your Custom Occasion'}
-            <span className="text-zinc-900 dark:text-zinc-100 ml-1 font-bold">*</span>
-          </label>
-          <Input
-            id="custom-occasion-input"
-            type="text"
-            placeholder={
-              language === 'hi'
-                ? 'उदा. मैराथन जीत, नई दुकान का उद्घाटन, पहली कार, पीएचडी पूरी होना...'
-                : language === 'gu'
-                ? 'દા.ત. નવી ગાડી, દુકાનનું ઉદ્ઘાટન, નવી કંપની શરૂ કરી...'
-                : 'e.g. Marathon finish, Book launch, First home, Startup funding...'
-            }
-            value={customOccasionText}
-            onChange={(e) => onCustomOccasionChange?.(e.target.value)}
-            className="h-11 border-zinc-300 dark:border-zinc-700 text-sm"
-            maxLength={60}
-          />
+          <div className="relative flex items-center max-w-xl">
+            <span className="absolute left-3.5 text-zinc-400 text-sm">✍️</span>
+            <Input
+              type="text"
+              placeholder={t.customPlaceholder}
+              value={customOccasionText}
+              onChange={(e) => onCustomOccasionChange?.(e.target.value)}
+              className="h-12 pl-10 pr-10 rounded-xl text-sm sm:text-base border-zinc-200/90 bg-zinc-50/60 hover:bg-white focus:bg-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 dark:bg-zinc-900/80 dark:border-zinc-700/80 transition-all"
+              maxLength={60}
+              autoFocus
+            />
+            {customOccasionText && (
+              <button
+                type="button"
+                onClick={() => onCustomOccasionChange?.('')}
+                className="absolute right-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 cursor-pointer"
+                title="Clear text"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
