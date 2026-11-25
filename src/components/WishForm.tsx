@@ -287,15 +287,15 @@ export const WishForm: React.FC<WishFormProps> = ({
                   key={lang.id}
                   type="button"
                   onClick={() => onLanguageChange(lang.id)}
-                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-semibold border-2 transition-all ${
+                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium border transition-all ${
                     isSelected
-                      ? 'border-zinc-900 bg-zinc-100/80 text-zinc-950 shadow-xs ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
+                      ? 'border-zinc-400 bg-zinc-50/90 font-semibold text-zinc-950 shadow-xs ring-1 ring-zinc-400/25 dark:border-zinc-500 dark:bg-zinc-800/70 dark:text-zinc-50 dark:ring-zinc-500/25'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
                   <span className="text-base">{lang.flag}</span>
                   <span>{lang.native}</span>
-                  {isSelected && <Check className="h-3.5 w-3.5 text-zinc-900 dark:text-zinc-100 ml-0.5" />}
+                  {isSelected && <Check className="h-3.5 w-3.5 text-zinc-700 dark:text-zinc-200 ml-0.5" />}
                 </button>
               );
             })}
@@ -316,16 +316,16 @@ export const WishForm: React.FC<WishFormProps> = ({
                   key={toneItem.id}
                   type="button"
                   onClick={() => handleToggleTone(toneItem.id)}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium border-2 transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium border transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-zinc-900 bg-zinc-100/90 text-zinc-950 font-semibold shadow-xs ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
+                      ? 'border-zinc-400 bg-zinc-50/90 font-semibold text-zinc-950 shadow-xs ring-1 ring-zinc-400/25 dark:border-zinc-500 dark:bg-zinc-800/70 dark:text-zinc-50 dark:ring-zinc-500/25'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
                   <span className="text-sm">{toneItem.emoji}</span>
                   <span>{getToneLabel(toneItem)}</span>
                   {isSelected && (
-                    <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 ml-0.5">
+                    <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900 ml-0.5">
                       <Check className="h-2 w-2 stroke-[3]" />
                     </div>
                   )}

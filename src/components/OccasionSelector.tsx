@@ -70,16 +70,16 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
               key={occ.id}
               type="button"
               onClick={() => onSelectOccasion(occ.id)}
-              className={`relative flex flex-col justify-between h-[122px] w-full rounded-xl p-3 sm:p-3.5 text-left border-2 transition-all duration-150 outline-none cursor-pointer ${
+              className={`relative flex flex-col justify-between h-[122px] w-full rounded-xl p-3 sm:p-3.5 text-left border transition-all duration-150 outline-none cursor-pointer ${
                 isSelected
-                  ? 'border-zinc-900 bg-zinc-100/80 text-zinc-950 shadow-sm ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
+                  ? 'border-zinc-400 bg-zinc-50/90 text-zinc-950 shadow-xs ring-1 ring-zinc-400/25 dark:border-zinc-500 dark:bg-zinc-800/70 dark:text-zinc-50 dark:ring-zinc-500/25'
                   : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-200 dark:hover:border-zinc-700'
               }`}
             >
               <div className="flex items-start justify-between w-full h-6 shrink-0">
                 <span className="text-2xl leading-none select-none">{occ.icon}</span>
                 {isSelected ? (
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs shrink-0">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900 shadow-xs shrink-0">
                     <Check className="h-3 w-3 stroke-[3]" />
                   </div>
                 ) : (
