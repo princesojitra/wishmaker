@@ -176,7 +176,6 @@ export function App() {
               onLanguageChange={setLanguage}
               onSubmit={handleFormSubmit}
               isLoading={isLoading}
-              onShowToast={showToast}
             />
           </div>
 

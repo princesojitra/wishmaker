@@ -13,7 +13,6 @@ interface WishFormProps {
   onLanguageChange: (lang: Language) => void;
   onSubmit: (data: WishRequest) => void;
   isLoading: boolean;
-  onShowToast?: (msg: string, type?: 'success' | 'warning' | 'error' | 'info') => void;
 }
 
 export const WishForm: React.FC<WishFormProps> = ({
@@ -23,7 +22,6 @@ export const WishForm: React.FC<WishFormProps> = ({
   onLanguageChange,
   onSubmit,
   isLoading,
-  onShowToast,
 }) => {
   const [recipientName, setRecipientName] = useState('');
   const [relationship, setRelationship] = useState('friend');
@@ -61,18 +59,13 @@ export const WishForm: React.FC<WishFormProps> = ({
 
     // 1. Validate custom occasion if selected
     if (selectedOccasion === 'custom' && (!customOccasionText || !customOccasionText.trim())) {
-      const msg =
-        language === 'hi'
-          ? 'कृपया अपने खास अवसर का नाम लिखें (अनिवार्य)'
-          : language === 'gu'
-          ? 'કૃપા કરીને તમારા ખાસ પ્રસંગનું નામ લખો (ફરજિયાત)'
-          : 'Please enter your custom occasion name (mandatory)';
-      onShowToast?.(msg, 'warning');
       const occInput = document.getElementById('custom-occasion-input');
       occInput?.focus();
       occInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      occInput?.classList.add('animate-shake');
-      setTimeout(() => occInput?.classList.remove('animate-shake'), 500);
+      occInput?.classList.add('animate-shake', 'border-red-500', 'ring-2', 'ring-red-500/20');
+      setTimeout(() => {
+        occInput?.classList.remove('animate-shake');
+      }, 500);
       return;
     }
 
@@ -86,7 +79,6 @@ export const WishForm: React.FC<WishFormProps> = ({
           : 'Please enter the recipient’s name';
       setNameError(msg);
       triggerShake('name');
-      onShowToast?.(msg, 'warning');
       recipientInputRef.current?.focus();
       recipientInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -103,7 +95,6 @@ export const WishForm: React.FC<WishFormProps> = ({
           : 'Custom tone is mandatory — please describe your preferred tone';
       setCustomToneError(msg);
       triggerShake('tone');
-      onShowToast?.(msg, 'warning');
       customToneInputRef.current?.focus();
       customToneInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
