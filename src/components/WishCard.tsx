@@ -42,7 +42,7 @@ export const WishCard: React.FC<WishCardProps> = ({
     language === 'hi' ? 'lang-hi' : language === 'gu' ? 'lang-gu' : 'font-sans';
 
   return (
-    <Card className="flex flex-col justify-between overflow-hidden border border-zinc-200 bg-white hover:border-zinc-300 transition-all dark:border-zinc-800 dark:bg-zinc-900/60 shadow-xs">
+    <Card className="flex flex-col justify-between overflow-hidden border border-zinc-200 bg-white hover:border-zinc-300 transition-all dark:border-zinc-800 dark:bg-zinc-900/60 shadow-xs h-full">
       <CardHeader className="p-4 pb-2">
         <div className="flex items-center justify-between gap-2">
           <Badge variant="secondary" className="text-[11px] font-medium px-2 py-0.5">

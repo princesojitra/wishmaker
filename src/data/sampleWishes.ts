@@ -29,6 +29,15 @@ const OCCASION_META: Record<string, OccasionDetails> = {
     themeHi: 'दीपों की रोशनी, सुख-समृद्धि और मंगलकारी आशीर्वाद',
     themeGu: 'દીવાઓનો પ્રકાશ, સુખ-શાંતિ અને સમૃદ્ધિની વર્ષા',
   },
+  festival: {
+    titleEn: 'Festive Season',
+    titleHi: 'दीपावली व पावन पर्व',
+    titleGu: 'દિવાળી અને પર્વ',
+    emoji: '🪔',
+    themeEn: 'radiant lights, prosperity, and divine joy',
+    themeHi: 'दीपों की रोशनी, सुख-समृद्धि और मंगलकारी आशीर्वाद',
+    themeGu: 'દીવાઓનો પ્રકાશ, સુખ-શાંતિ અને સમૃદ્ધિની વર્ષા',
+  },
   anniversary: {
     titleEn: 'Anniversary',
     titleHi: 'सालगिरह',

@@ -70,21 +70,21 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
               key={occ.id}
               type="button"
               onClick={() => onSelectOccasion(occ.id)}
-              className={`relative flex flex-col justify-between min-h-[108px] rounded-xl p-3.5 text-left border-2 transition-all duration-150 outline-none ${
+              className={`relative flex flex-col justify-between h-[122px] w-full rounded-xl p-3 sm:p-3.5 text-left border-2 transition-all duration-150 outline-none cursor-pointer ${
                 isSelected
                   ? 'border-zinc-900 bg-zinc-100/80 text-zinc-950 shadow-sm ring-1 ring-zinc-900/20 dark:border-zinc-200 dark:bg-zinc-800/90 dark:text-zinc-50 dark:ring-zinc-200/30'
                   : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-200 dark:hover:border-zinc-700'
               }`}
             >
-              <div className="flex items-start justify-between mb-2">
-                <span className="text-2xl">{occ.icon}</span>
+              <div className="flex items-start justify-between w-full h-6 shrink-0">
+                <span className="text-2xl leading-none select-none">{occ.icon}</span>
                 {isSelected ? (
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs shrink-0">
                     <Check className="h-3 w-3 stroke-[3]" />
                   </div>
                 ) : (
                   occ.popular && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 bg-zinc-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-zinc-800 shadow-2xs dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 bg-zinc-100 px-2 py-0.5 text-[10px] font-bold tracking-wide text-zinc-800 shadow-2xs dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 shrink-0">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
                       <span>Popular</span>
                     </span>
@@ -92,11 +92,11 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
                 )}
               </div>
 
-              <div>
-                <p className={`text-sm font-semibold tracking-tight ${isSelected ? 'text-zinc-950 dark:text-zinc-50' : 'text-zinc-800 dark:text-zinc-200'}`}>
+              <div className="w-full shrink-0">
+                <p className={`text-sm font-semibold tracking-tight truncate leading-tight ${isSelected ? 'text-zinc-950 dark:text-zinc-50' : 'text-zinc-800 dark:text-zinc-200'}`}>
                   {getLocalizedTitle(occ)}
                 </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-snug mt-1">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-snug mt-1 line-clamp-2 h-8 overflow-hidden">
                   {occ.description}
                 </p>
               </div>
