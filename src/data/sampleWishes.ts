@@ -215,9 +215,12 @@ export function getCuratedWishes(req: WishRequest): Wish[] {
   const tones = Array.isArray(req.tones) && req.tones.length > 0 ? req.tones : [req.tone || 'heartfelt'];
   const context = req.context?.trim() || '';
 
-  // Cycle index: increments every time the user taps Regenerate!
-  const regenCount = req.regenerationCount ?? req.seed ?? 0;
-  const cycle = regenCount % 3;
+  // Dynamic random cycle: ensures fresh, random output every time on any device
+  const effectiveSeed = req.seed !== undefined && req.seed !== 0
+    ? req.seed
+    : Math.floor(Math.random() * 1000000) + 1;
+  const regenCount = req.regenerationCount ?? 0;
+  const cycle = Math.abs((effectiveSeed + regenCount * 7) % 3);
   const loop = Math.floor(regenCount / 3);
 
   const meta = OCCASION_META[rawOcc] || {

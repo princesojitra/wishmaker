@@ -39,8 +39,13 @@ export default defineConfig(({ mode }) => {
                     tones,
                     language = 'en',
                     context: userContext = '',
+                    seed,
+                    regenerationCount = 0,
+                    previousWishes = [],
                   } = body;
 
+                  const randomSeed = seed || Math.floor(Math.random() * 1000000) + 1;
+                  const entropyToken = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
                   const toneList = Array.isArray(tones) && tones.length > 0 ? tones.join(', ') : tone;
 
                   const fallbackRequest = {
@@ -51,6 +56,9 @@ export default defineConfig(({ mode }) => {
                     tones: Array.isArray(tones) ? tones : [tone],
                     language,
                     context: userContext,
+                    seed: randomSeed,
+                    regenerationCount,
+                    previousWishes,
                   };
 
                   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
@@ -76,6 +84,12 @@ export default defineConfig(({ mode }) => {
 - Tone(s) Selected: "${toneList}"
 - Language: ${langInstruction}
 ${userContext ? `- Personal Memory / Context: "${userContext}"` : ''}
+
+CREATIVE DIVERSITY & NOVELTY MANDATE (Unique Generation Token: ${entropyToken}):
+- Every generation request MUST be completely fresh, novel, and diverse.
+- DO NOT repeat common formulas or generic greetings.
+- Craft diverse metaphors, distinct opening hooks, and unique phrasing for each of the 3 wishes.
+${previousWishes && previousWishes.length > 0 ? `- DO NOT reuse ideas or wording from previous wishes: [${previousWishes.slice(0, 3).join(' | ')}]` : ''}
 
 CRITICAL RULES:
 1. Every wish MUST center around the Occasion ("${occasion}") and honor the Relationship ("${relationship}").
@@ -107,6 +121,11 @@ CRITICAL RULES:
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                           contents: [{ parts: [{ text: prompt }] }],
+                          generationConfig: {
+                            temperature: 1.05,
+                            topP: 0.95,
+                            topK: 40,
+                          },
                         }),
                       });
                       console.log(`[API] ${model} status:`, resp.status);

@@ -11,15 +11,15 @@ export const LoadingSkeleton: React.FC = () => {
     <div className="space-y-5 pt-2 animate-fade-in w-full">
       {/* Top Header Bar Skeleton */}
       <div className="flex items-center justify-between pb-3 border-b border-zinc-200/70 dark:border-zinc-800">
-        <div className="space-y-1.5">
-          <div className="h-6 w-56 rounded-lg bg-zinc-200/80 dark:bg-zinc-800 animate-pulse" />
-          <div className="h-4 w-40 rounded bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
+        <div className="space-y-1 min-w-0 flex-1">
+          <div className="h-5 sm:h-6 w-40 sm:w-56 rounded-lg bg-zinc-200/80 dark:bg-zinc-800 animate-pulse" />
+          <div className="h-3.5 sm:h-4 w-28 sm:w-40 rounded bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
         </div>
-        <div className="h-9 w-28 rounded-full bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
+        <div className="h-8 sm:h-9 w-20 sm:w-28 rounded-full bg-zinc-100 dark:bg-zinc-800 animate-pulse shrink-0" />
       </div>
 
       {/* 3 Columns Grid Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5 lg:gap-5 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 items-stretch">
         {[0, 1, 2].map((idx) => (
           <div
             key={idx}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Check } from 'lucide-react';
+import { Sparkles, Languages, MessageCircle } from 'lucide-react';
 import { Language } from '../types/wish';
 
 interface HeroProps {
@@ -43,7 +43,7 @@ export const Hero: React.FC<HeroProps> = ({ language }) => {
   const t = content[language] || content.en;
 
   return (
-    <section className="pt-6 pb-6 text-center space-y-4">
+    <section className="pt-6 pb-4 text-center space-y-4">
       {/* Pill Badge */}
       <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-200/80 bg-violet-50/80 px-3.5 py-1 text-xs font-semibold text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300 shadow-2xs">
         <Sparkles className="h-3.5 w-3.5 text-violet-500 animate-pulse" />
@@ -64,20 +64,31 @@ export const Hero: React.FC<HeroProps> = ({ language }) => {
         {t.sub}
       </p>
 
-      {/* Trust Badges */}
-      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-1 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-        <span className="inline-flex items-center gap-1.5">
-          <Check className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 stroke-[3]" />
+      {/* Redesigned Premium Feature Highlight Chips */}
+      <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 pt-2">
+        {/* Chip 1: Personalized & Nuanced */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-violet-200/80 bg-white/85 px-3.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs backdrop-blur-xs hover:border-violet-300 dark:border-violet-900/50 dark:bg-zinc-900/70 dark:text-zinc-200 transition-all select-none">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-950/80 text-violet-600 dark:text-violet-400">
+            <Sparkles className="h-3 w-3" />
+          </span>
           <span>{t.trust1}</span>
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Check className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 stroke-[3]" />
+        </div>
+
+        {/* Chip 2: 3 Indian Languages */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/85 px-3.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs backdrop-blur-xs hover:border-sky-300 dark:border-sky-900/50 dark:bg-zinc-900/70 dark:text-zinc-200 transition-all select-none">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400">
+            <Languages className="h-3 w-3" />
+          </span>
           <span>{t.trust2}</span>
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Check className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 stroke-[3]" />
+        </div>
+
+        {/* Chip 3: Instant WhatsApp Share */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-white/85 px-3.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs backdrop-blur-xs hover:border-emerald-300 dark:border-emerald-900/50 dark:bg-zinc-900/70 dark:text-zinc-200 transition-all select-none">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400">
+            <MessageCircle className="h-3 w-3 fill-current/10" />
+          </span>
           <span>{t.trust3}</span>
-        </span>
+        </div>
       </div>
     </section>
   );

@@ -54,8 +54,8 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
         {t.label}
       </label>
 
-      {/* Occasion Pills Strip */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Symmetrical Occasion Tiles Grid: 3x3 on Desktop, 2-col on Mobile */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
         {primaryOccasions.map((occ) => {
           const isSelected = selectedOccasion === occ.id;
           return (
@@ -63,37 +63,39 @@ export const OccasionSelector: React.FC<OccasionSelectorProps> = ({
               key={occ.id}
               type="button"
               onClick={() => onSelectOccasion(occ.id)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer select-none ${
+              className={`flex items-center gap-2.5 px-3 sm:px-3.5 h-11 sm:h-12 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer select-none text-left border ${
                 isSelected
-                  ? 'bg-violet-600 text-white shadow-md shadow-violet-500/25 ring-2 ring-violet-400/40 transform -translate-y-0.5'
-                  : 'bg-zinc-100/90 text-zinc-800 hover:bg-zinc-200/80 hover:text-zinc-950 border border-zinc-200/70 dark:bg-zinc-800/80 dark:text-zinc-200 dark:border-zinc-700 dark:hover:bg-zinc-700'
+                  ? 'bg-violet-600 text-white border-violet-600 shadow-sm shadow-violet-500/25 ring-2 ring-violet-400/30 transform -translate-y-0.5'
+                  : 'bg-zinc-50/80 hover:bg-zinc-100/90 text-zinc-800 border-zinc-200/80 hover:border-zinc-300 dark:bg-zinc-900/60 dark:text-zinc-200 dark:border-zinc-800 dark:hover:bg-zinc-800/80'
               }`}
             >
-              <span className="text-sm leading-none">{occ.icon}</span>
-              <span>{getLocalizedTitle(occ)}</span>
+              <span className="text-base shrink-0 leading-none">{occ.icon}</span>
+              <span className="truncate flex-1">{getLocalizedTitle(occ)}</span>
             </button>
           );
         })}
 
-        {/* Custom Pill */}
+        {/* 9th Tile: Custom Celebration (Spans 2 cols on mobile, 1 col on desktop for perfect 3x3) */}
         <button
           type="button"
           onClick={() => onSelectOccasion('custom')}
-          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer select-none border ${
+          className={`col-span-2 sm:col-span-1 flex items-center gap-2.5 px-3 sm:px-3.5 h-11 sm:h-12 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer select-none text-left border ${
             isCustomActive
-              ? 'bg-violet-600 text-white border-violet-600 shadow-md shadow-violet-500/25 ring-2 ring-violet-400/40 transform -translate-y-0.5'
-              : 'border-zinc-200/90 bg-zinc-100/90 text-zinc-800 hover:bg-zinc-200/80 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-200'
+              ? 'bg-violet-600 text-white border-violet-600 shadow-sm shadow-violet-500/25 ring-2 ring-violet-400/30 transform -translate-y-0.5'
+              : 'bg-zinc-50/80 hover:bg-zinc-100/90 text-zinc-800 border-zinc-200/80 hover:border-zinc-300 dark:bg-zinc-900/60 dark:text-zinc-200 dark:border-zinc-800 dark:hover:bg-zinc-800/80'
           }`}
         >
-          <span>✍️</span>
-          <span>{customOccasionText && isCustomActive ? customOccasionText : t.customLabel}</span>
+          <span className="text-base shrink-0 leading-none">✍️</span>
+          <span className="truncate flex-1">
+            {customOccasionText && isCustomActive ? customOccasionText : t.customLabel}
+          </span>
         </button>
       </div>
 
       {/* In-place Custom Occasion Input */}
       {isCustomActive && (
-        <div className="pt-1.5 animate-fade-in">
-          <div className="relative flex items-center max-w-xl">
+        <div className="pt-2 animate-fade-in">
+          <div className="relative flex items-center">
             <span className="absolute left-3.5 text-zinc-400 text-sm">✍️</span>
             <Input
               type="text"

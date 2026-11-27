@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { OccasionSelector } from './components/OccasionSelector';
 import { WishForm } from './components/WishForm';
 import { WishResults } from './components/WishResults';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
@@ -121,11 +120,12 @@ export function App() {
   };
 
   const handleFormSubmit = (data: WishRequest) => {
+    const randomSeed = Math.floor(Math.random() * 1000000) + 1;
     setRegenCounter(0);
     handleGenerateWishes({
       ...data,
       regenerationCount: 0,
-      seed: 0,
+      seed: randomSeed,
       previousWishes: [],
     });
   };
@@ -133,11 +133,12 @@ export function App() {
   const handleRegenerate = () => {
     if (lastRequest) {
       const nextCount = regenCounter + 1;
+      const randomSeed = Math.floor(Math.random() * 1000000) + 1;
       setRegenCounter(nextCount);
       const previousTexts = wishes ? wishes.map((w) => `${w.title}: ${w.content.slice(0, 40)}`) : [];
       handleGenerateWishes({
         ...lastRequest,
-        seed: nextCount,
+        seed: randomSeed,
         regenerationCount: nextCount,
         previousWishes: previousTexts,
       });
@@ -154,27 +155,18 @@ export function App() {
         onGoHome={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       />
 
-      <main className="flex-1 pb-16">
+      <main className="flex-1 pb-6 sm:pb-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 space-y-8">
           {/* Hero Banner */}
           <Hero language={language} />
 
-          {/* Unified Generator Studio Card */}
-          <div className="max-w-3xl mx-auto w-full rounded-3xl border border-zinc-200/90 bg-white p-6 sm:p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/70 space-y-6">
-            {/* Occasion Selector */}
-            <OccasionSelector
+          {/* Unified Multi-Step Studio Card */}
+          <div className="max-w-3xl mx-auto w-full rounded-3xl border border-zinc-200/90 bg-white p-6 sm:p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/70">
+            <WishForm
               selectedOccasion={occasion}
               onSelectOccasion={setOccasion}
               customOccasionText={customOccasion}
               onCustomOccasionChange={setCustomOccasion}
-              language={language}
-            />
-
-            <div className="border-t border-zinc-100 dark:border-zinc-800/80" />
-
-            {/* Personalization Form */}
-            <WishForm
-              selectedOccasion={occasion}
               language={language}
               onLanguageChange={setLanguage}
               onSubmit={handleFormSubmit}

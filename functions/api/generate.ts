@@ -49,6 +49,8 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       previousWishes = [],
     } = body;
 
+    const randomSeed = seed || Math.floor(Math.random() * 1000000) + 1;
+    const entropyToken = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const toneList = Array.isArray(tones) && tones.length > 0 ? tones.join(', ') : tone;
 
     const apiKey = env.GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : undefined);
@@ -61,7 +63,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       tones,
       language,
       context: userContext,
-      seed,
+      seed: randomSeed,
       regenerationCount,
       previousWishes,
     };
@@ -82,7 +84,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     const isRegen = (regenerationCount || 0) > 0;
     const regenInstruction = isRegen
       ? `
-REGENERATION MANDATE (Cycle #${regenerationCount}, Unique Seed: ${seed || Math.random()}):
+REGENERATION MANDATE (Cycle #${regenerationCount}, Seed: ${randomSeed}):
 - The user clicked "Regenerate" to see completely DIFFERENT wishes.
 - You MUST provide 3 completely fresh, novel creative angles with different metaphors, vocabulary, and openings!
 - DO NOT repeat or paraphrase ideas from previous wishes: [${previousWishes.slice(0, 3).join(' | ')}].
@@ -99,6 +101,11 @@ INPUTS:
 - Tone(s) Selected: "${toneList}"
 - Language: ${language === 'hi' ? 'Hindi (STRICTLY in authentic Devanagari script, natural flow, heartwarming)' : language === 'gu' ? 'Gujarati (STRICTLY in authentic Gujarati script, culturally rich blessings)' : 'English'}
 - Extra Memory / Context: "${userContext || 'None'}"
+
+CREATIVE DIVERSITY & NOVELTY MANDATE (Unique Generation Token: ${entropyToken}):
+- Every generation request MUST be completely fresh, novel, and diverse.
+- DO NOT repeat common formulas, clichés, or generic greetings across runs.
+- Craft diverse metaphors, distinct opening hooks, and unique phrasing for each of the 3 wishes.
 ${regenInstruction}
 
 CRITICAL INSTRUCTIONS:
@@ -150,8 +157,9 @@ CRITICAL INSTRUCTIONS:
           body: JSON.stringify({
             contents: [{ parts: [{ text: systemPrompt }] }],
             generationConfig: {
-              temperature: isRegen ? 1.05 : 0.95,
+              temperature: 1.05,
               topP: 0.95,
+              topK: 40,
             },
           }),
         });
